@@ -35,8 +35,8 @@ class Four():
         res=self.callData(token,1)
         # print(res["data"])
         # total=res.data.total 
-        # pages=res["data"]["pages"]
-        pages=2
+        pages=res["data"]["pages"]
+        # pages=2
 
         for i in range(1,pages):
             res=self.callData(token,i)
