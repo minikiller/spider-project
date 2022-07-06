@@ -44,7 +44,7 @@ class Four():
             res=self.callData(token,i)
             for j in res["data"]["records"]:
                 packId=j["packId"]
-                tenderNo=j["tenderName"]
+                tenderNo=j["tenderNo"]+" "+j["tenderName"]
                 # print("packId is: ",packId)
                 result=self.getDetail(token,packId)
                 content=result["data"]["contentText"]
