@@ -30,7 +30,9 @@ class Four():
 
     def getInfo(self,token):
         import html,index
-        date=html.getCurDate()
+        import progressbar
+        p = progressbar.ProgressBar()
+        date=html.getCurDate() #获得当前日期
         strList=index.getIndex()
         res=self.callData(token,1)
         # print(res["data"])
@@ -38,24 +40,24 @@ class Four():
         pages=res["data"]["pages"]
         # pages=2
 
-        for i in range(1,pages):
+        for i in p(range(1,pages)):
             res=self.callData(token,i)
             for j in res["data"]["records"]:
                 packId=j["packId"]
-                tenderNo=j["tenderNo"]
-                print("packId is: ",packId)
+                tenderNo=j["tenderName"]
+                # print("packId is: ",packId)
                 result=self.getDetail(token,packId)
                 content=result["data"]["contentText"]
-                print("content is: ",content)
+                # print("content is: ",content)
                 fileName=f"{date}/{tenderNo}.html"
                 data=html.getResultContent(content) 
                 for item in data:
-                    print("开始处理字符串：",item.text)
+                    # print("开始处理字符串：",item.text)
                     if index.indexOfStr(item.text,strList):
                         html.exportHtml(content,fileName) 
                         html.outResultData(fileName)
                         break  
-                time.sleep(1)
+                time.sleep(0.05)
 
     def getDetail(self,token,packId):
         import requests

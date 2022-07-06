@@ -1,0 +1,44 @@
+# 杭州锦江集团 
+POST http://newec.hzjj.cn/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+username=ccglyb&password=2931147
+
+###
+
+GET http://newec.hzjj.cn/secure/main.do HTTP/1.1
+
+
+#### 中船重工电子采购平台
+http://www.ebuy.csemc.com，账号密码：ccglyb/Cc2931147
+
+####
+POST http://bs.ebuy.csemc.com/login/indexLogin.do HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+type=1&rememberflag=0&logsid=0&pwd=FF6626E41D6782A1D3A7E1AAC52C723C&uid=ccglyb&kl=FF6626E41D6782A1D3A7E1AAC52C723C&randCode=3
+
+#### 1688平台https://login.1688.com，账号密码：cc_lili@163.com/ccglyb2931147
+
+
+### 
+# https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage
+POST https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage  HTTP/1.1
+Content-Type: application/json
+X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcwMTk5ODB9.rUaLX2rZznvXGsNQYErS9ztwBVInYinJilRsBGuOpZc
+
+{
+    "tenderMethod": "11",
+    "pageNo": 22,
+    "pageSize": 1,
+    "state": "01"
+}
+
+### 
+POST  https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId=96c93d2de7f94599bee7abc261ef5e68
+Content-Type: application/json
+X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcwMTk5ODB9.rUaLX2rZznvXGsNQYErS9ztwBVInYinJilRsBGuOpZc
+
+
+
+

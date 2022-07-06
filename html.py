@@ -7,11 +7,11 @@ import time,os
 def exportHtml(str,fileName):
     str1=str.splitlines() # remove /r/n 
     # open file in write mode
-    with open(fileName, 'w') as fp:
+    with open(fileName, 'w', encoding='utf-8') as fp:
         for item in str1:
             # write each item on a new line
             fp.write("%s\n" % item)
-        print(f'finish write to {fileName}, Done')
+        # print(f'finish write to {fileName}, Done')
 
 def getResultContent(content):
     tree = etree.HTML(content)
