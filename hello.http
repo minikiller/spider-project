@@ -25,7 +25,7 @@ type=1&rememberflag=0&logsid=0&pwd=FF6626E41D6782A1D3A7E1AAC52C723C&uid=ccglyb&k
 # https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage
 POST https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage  HTTP/1.1
 Content-Type: application/json
-X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcwMTk5ODB9.rUaLX2rZznvXGsNQYErS9ztwBVInYinJilRsBGuOpZc
+X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcxODMxNTB9.HDX0QyipfUbts4tKvUUFYdvvPxQSloz4Ou7dPWXtTfw
 
 {
     "tenderMethod": "11",
@@ -37,7 +37,8 @@ X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWU
 ### 
 POST  https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId=96c93d2de7f94599bee7abc261ef5e68
 Content-Type: application/json
-X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcwMTk5ODB9.rUaLX2rZznvXGsNQYErS9ztwBVInYinJilRsBGuOpZc
+X-AUTH-TOKEN: 115774_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJDQ0dMWUIiLCJzdWIiOiJDQ0dMWUIiLCJpYXQiOjE2NTcxODMxNTB9.HDX0QyipfUbts4tKvUUFYdvvPxQSloz4Ou7dPWXtTfw
+
 
 
 
