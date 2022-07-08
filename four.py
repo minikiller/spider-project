@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # 大唐集团公司 http://www.cdt-ec.com，账号密码：ccglyb/ccglyb2931147
 
-from email import header
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -24,7 +23,7 @@ class Four():
             "pageSize": 10,
             "state": "01"
         }
-        res=requests.post(url,json=data,headers=Headers)
+        res=requests.post(url,json=data,headers=Headers,timeout=120)
         
         return res.json()
 
@@ -57,14 +56,14 @@ class Four():
                         html.exportHtml(content,fileName) 
                         html.outResultData(fileName)
                         break  
-                time.sleep(0.05)
+                time.sleep(0.1)
 
     def getDetail(self,token,packId):
         import requests
         url=f"https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId={packId}"
         Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json","User-Agent": str(self.user_agent)}
         
-        res=requests.post(url,headers=Headers)
+        res=requests.post(url,headers=Headers,timeout=120)
         # print(res.json())
         return res.json()
 
@@ -181,7 +180,9 @@ class Four():
             # print(data)
         finally:
             browser.close()
+            browser.quit()
             use_time = int(time.time()) - int(start_time)
+            print("\n")
             print(f'爬取总计耗时：{use_time}秒')
             pass
 if __name__ == '__main__':
