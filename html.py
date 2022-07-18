@@ -13,6 +13,19 @@ def exportHtml(str,fileName):
             fp.write("%s\n" % item)
         # print(f'finish write to {fileName}, Done')
 
+def exportTempHtml(str,fileName):
+    try:
+        os.mkdir("./tmp")
+    except OSError as error:
+        print(error)
+    str1=str.splitlines() # remove /r/n 
+    fileName="./tmp/"+fileName
+    # open file in write mode
+    with open(fileName, 'w', encoding='utf-8') as fp:
+        for item in str1:
+            # write each item on a new line
+            fp.write("%s\n" % item)
+
 def getResultContent(content):
     tree = etree.HTML(content)
     # print(tree) 
@@ -30,6 +43,7 @@ def getResultData(fileName):
     # tree = html.parse(r'./sales.html')
     tree = etree.HTML(page)
     # print(tree) 
+    path='//*[@id="gform"]/div[1]/div[3]/div/table/tbody/tr'
     href = tree.xpath("/html/body/div/div/table/tr/td[2]")
     # /html/body/div/div/table/tbody/tr[1]/td[2]
     # for value in href:
@@ -53,8 +67,26 @@ def getCurDate():
         print(error) 
     return date_str
 
+
+def getResultData1(fileName):
+    # import index
+    with open(fileName, "r") as f:
+        page = f.read()
+    # tree = html.parse(r'./sales.html')
+    # print(page)
+    tree = etree.HTML(page)
+    # # print(tree) 
+    # path='/html/body/div'
+    path='/html/body/div[2]/form/div[1]/div[3]/div/table/tr/td[2]'
+    href = tree.xpath(path)
+    # /html/body/div/div/table/tbody/tr[1]/td[2]
+    # for value in href:
+    #     # print(value.text)
+    #     index.getIndex
+    return href
+
 if __name__ == '__main__':
     # date_str=getCurDate()
     # print(date_str)
-    getResultData("./20220705/2a974f9f7e1242fea8881313209a6bb7.html")
-
+    data=getResultData1("./tmp/XJ022071800929.html")
+    print(len(data))

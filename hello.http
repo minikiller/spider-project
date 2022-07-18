@@ -46,3 +46,10 @@ Content-Type: application/json
 cookie: lid=%E9%95%BF%E6%98%A5%E9%94%85%E7%82%89%E4%BB%AA%E8%A1%A8; ali_apache_track=c_mid=b2b-29487705087185b|c_lid=%E9%95%BF%E6%98%A5%E9%94%85%E7%82%89%E4%BB%AA%E8%A1%A8|c_ms=1|c_mt=3; cna=yAhgGP47I0QCAXBJGNtvJFp/; firstRefresh=1657699431919; lastRefresh=1657699431919; aliwwLastRefresh=1657699431978; is_identity=buyer; alicnweb=touch_tb_at%3D1657699432385%7Clastlogonid%3D%25E9%2595%25BF%25E6%2598%25A5%25E9%2594%2585%25E7%2582%2589%25E4%25BB%25AA%25E8%25A1%25A8; cookie1=AQd9HZy1m%2BwccDlK0PTJEuat2MWShqJCfxcuZ1YVYpY%3D; cookie2=1c1c95da647dd65ccf96bc7403d29cc4; cookie17=UUGmtmdevDOAiA%3D%3D; sgcookie=E100T4pvt60fJ0JM4GJZCujasrWOJA4TVYKCCqpOinApYiyo%2B%2Fs3wAR8gohP7u8MXPek%2BdVIe9Sly%2BNWUZ8gA4WLuSbN%2BMTt%2F%2FLUKRWgU8ELrLc%3D; t=5cf8a2c76e28102d3423720c7e733ff6; _tb_token_=313b738be8aae; sg=%E8%A1%A888; csg=f694f7ef; unb=2948770508; uc4=id4=0%40U2OR%2FuA2ToTnTkj9QsDzvsdOr6K6&nk4=0%400h4znFeVdkEKmU3gfNPR0qk%2Bedu2MaU%3D; __cn_logon__=true; __cn_logon_id__=%E9%95%BF%E6%98%A5%E9%94%85%E7%82%89%E4%BB%AA%E8%A1%A8; ali_apache_tracktmp=c_w_signed=Y; _csrf_token=1657787756892; _nk_=%5Cu957F%5Cu6625%5Cu9505%5Cu7089%5Cu4EEA%5Cu8868; xlly_s=1; tfstk=cYx1ByACnIKFLaGCTNME77lPuLXcZMNC3A6eCXBLZyxQFt91iUEPNxsBnJsVH91..; l=eBPtrpGHLDlxbsh3BOfZFurza779IIRVguPzaNbMiOCP_X7e5QRdW6vvZFOwCnGNns9WR3P8n0-9BVYEwyUih1C5AbYkH6qZ3d6G.; isg=BKCgK74a1jPBCWopsk-xw8jzcahyqYRzH5rNsBqxbrtOFUI_wriQA5RjrbWVpTxL
 
 
+###
+POST http://td.ebuy.csemc.com/exp/querybusiness/process/sell/list.do
+Cookie: http_waf_cookie=45f4f6a5-643b-4a6707db150f5cf9e37bae048d2a0348c367; JSESSIONID=4975BA714F07DFCFDA986F4E7AF1AFE5.node1; Market.ebuy.csemc.com=ccglyb*1c4bd8123e864d35a8b219b3deb8a939; Market.ebuy.csemc.com.refresh_time=4500; Market.ebuy.csemc.com.access_time=2700; Market.ebuy.csemc.com.userid=ccglyb; Market.ebuy.csemc.com.access_token=75BoJO9CBdJAMI9-lppsBxZntGVcq-ej_HKaK_wgG0E; Market.ebuy.csemc.com.refresh_token=aVPkbIs8--7cbP7wTXXfXonxSDRB1KnjB63-VzGae3c; Market.ebuy.csemc.com.last_refresh_time=1658112190490
+Content-Type: application/x-www-form-urlencoded
+
+&pageNumber=2
+&pageSize=10

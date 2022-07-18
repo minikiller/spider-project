@@ -12,3 +12,10 @@ https://login.taobao.com/member/login.jhtml
 #### 相关文档
 1.run.sh 启动chrome的remote debugger模式
 2.debug.py 连接chrome的debugger，这样解决了自动登陆的问题
+
+
+###  中船重工电子采购平台
+url="http://www.ebuy.csemc.com"
+_username='ccglyb'
+_password='Cc2931147'
+
