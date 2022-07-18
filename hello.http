@@ -53,3 +53,23 @@ Content-Type: application/x-www-form-urlencoded
 
 &pageNumber=2
 &pageSize=10
+
+
+###
+
+POST https://b2b.crpower.com.cn/ispweb/pcux5PonHeaders/searchWinningList.do
+Content-Type: application/x-www-form-urlencoded
+
+data={"startDate":"2022-07-16","endDate":"2022-07-18"}
+&take=20
+&skip=0
+&page=1
+&pageSize=20
+
+
+###
+
+POST https://b2b.crpower.com.cn/ispweb/pcux5PonHeaders/toFindSourceDetails.do
+Content-Type: application/x-www-form-urlencoded
+
+sourceId=5a3dec9ad8a048334d0450bb5ef6e46e

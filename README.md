@@ -19,3 +19,8 @@ url="http://www.ebuy.csemc.com"
 _username='ccglyb'
 _password='Cc2931147'
 
+### 华润 
+https://b2b.crpower.com.cn/ 
+按照日期（最近两天）查询 
+ccglyb/2931147
+
