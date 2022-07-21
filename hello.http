@@ -73,3 +73,75 @@ POST https://b2b.crpower.com.cn/ispweb/pcux5PonHeaders/toFindSourceDetails.do
 Content-Type: application/x-www-form-urlencoded
 
 sourceId=5a3dec9ad8a048334d0450bb5ef6e46e
+
+
+### 
+
+https://ebid.espic.com.cn/bidweb/#/procurement/procurementNotice?packId=1e47c8aae520461da4e1e7e88a5f2953&bizId=edf044e425a54496bfb8bf5defe9838b&tenderType=00&tenderMethod=11
+
+
+###
+
+POST https://ebid.espic.com.cn/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+X-AUTH-TOKEN: 720f4e2665dc42e38d63dfaa7112d73f_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyOTMxMTQ3Y2NnbHliIiwic3ViIjoiMjkzMTE0N2NjZ2x5YiIsImlhdCI6MTY1ODIwNzM0MH0.81a0-1MFLirmscAzZSKfKxkQWVvzp8s9MSk0vnIwTXY
+
+{"tenderName": "摄像头", "tenderMethod": "11", "pageNo": 1, "pageSize": 10, "state": "01"}
+
+
+###
+GET https://ebid.espic.com.cn/bidprocurement/common-tools/tools/commonUpload/getFileDetail?bizId=fe5cfef85ae94ddbaa303df5cf111b37&fileType=bulletin_template_pdf_base&t=1658210556127
+Content-Type: application/json;charset=UTF-8
+X-AUTH-TOKEN: 720f4e2665dc42e38d63dfaa7112d73f_eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIyOTMxMTQ3Y2NnbHliIiwic3ViIjoiMjkzMTE0N2NjZ2x5YiIsImlhdCI6MTY1ODIwNzM0MH0.81a0-1MFLirmscAzZSKfKxkQWVvzp8s9MSk0vnIwTXY
+
+
+###
+GET https://ebid.espic.com.cn/bidprocurement/common-tools/tools/commonUpload/readImageRoot?imagePath=
+
+
+###
+Post https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierQryIqrPurchaseNoticeList
+Content-Type: application/x-www-form-urlencoded
+Cookie: aliyungf_tc=80eaf87d9ecc123376f9f5cdc059291b91f4f56a145961f25c9603958825aa96; acw_tc=707c9f6a16582172262505698e6efbcd9213f8d1030a1446b9c39e9837356b; JSESSIONID=62298C652FBBEECB9FDF38485C82C346; SERVERID=1919070bac71516aa23b605c8163f9b8|1658217515|1658217226
+
+test=1
+&pageNo=1
+&pageSize=10
+&inquiryName=水位
+
+###
+Post https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierIqrPurchaseNoticeDetail
+Content-Type: application/x-www-form-urlencoded
+Cookie: aliyungf_tc=80eaf87d9ecc123376f9f5cdc059291b91f4f56a145961f25c9603958825aa96; acw_tc=781bad3c16582358328294340e1ef7dce347a8ca3bcd69ff3549de078e2008; JSESSIONID=73359A67AA501385DD30E8F331D54824; SERVERID=1919070bac71516aa23b605c8163f9b8|1658237192|1658235832
+passkey: 4af9a678bcb04680fed124fb428a45afe2b263de1e7e83c8c003c29a751a1f0dcea4966c831c6537ce995eaad49ba1e461b2320baf50858bb3d0e8390658ff80eb1156b942c65be7fd1d34c82dea5a9f35ad2110c66a9d71b13a1388c074f9cad5ddb4cec3873c66b426a26c1da95091f8605bfe758b1ab9110bdd9a8f0be94a8f00cd14935fedca96e8c52c879851d6
+
+&inquiryId=624885
+&iqrSeq=1
+&purchaseCategory=1
+
+
+
+###
+Post https://www.chdtp.com/zbcg/cggl/displaysCgbjAction.action
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Content-Type: application/x-www-form-urlencoded
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en
+Cache-Control: max-age=0
+Connection: keep-alive
+Content-Length: 177
+Cookie: JSESSIONID=0000KM9BX8bL647jyxTeB1zAokd:1fak1srpn; zZ6ZmsgRSJCBO=5oUhhOqasKOA0U.LO8Jpy.EqPc3n6sv60BpQVGdmpziuU.lYMZniGIiUBDS7nEleh3_4L3Ij_xLOA4olSUgIiPA; BIGipServerpool_web=1443080384.20480.0000; JSESSIONID=0000bg0k0cBVAzNEWtOnh2m3uE0:1fak1ippc; LTPAToken=WnNQ+YDnSqRryAiys0HjULFEiUDglpBT5xe+ZrhfS0vNb+1G5+k2vcYFqHVfRe/Fkdn4P8kfGHnNYNWpjeqHPUsw0rKf5ufdrQbhWOlYIuMVmlg64MATlP3GQFo8oT0tgredCBtagKlAa9P+DluV832BYBL4OTfooM8FJvQL4FFLIDQ77b38GVDi7+fLYewfLiSQHoguuIsMvxumJ/QjZoc9zYFxv0OsJ+wzpIiVl49gmuRQFBKsGVBAVkfLGx2gAHSfewt2zbOt9FOEq0x68s2XSOd2gJgctRjyh2Ly5GIOnVLl762P3d4HVUSCpbw2+gZNngiyY/NU6jlyQsnZLCcElC6Ao/zhn6khTw0yj74tr3bLKu6OrQmOYrgzlFBN; zZ6ZmsgRSJCBP=hO1rquSuOoLiEb3gai96yJH2k4d68vaYkn3UuNgZgRbKra7tRcNREk7RFu0swBt.9MB6DQUY865qzSqu2IiVKHwyZyyTzOWc_jXFSD1cJdKGS1fkYgeV8N8eLGUvM1QNPprBpdWWrSWmNvwPSfCfUCL3DTHlP_CoenBJ9A.y3NvMoFQpveJiy6Fnq9XxHVt0B.EvgVka_GmO2SylP.2EawWC_mSzotYTGKN2spOCbuDYa2TgGVCqYvUUpU_Y441u8InzggVzhPPAJ69EMWOuKNCjTSvcUv_2SW499hABKmlHHnUfayFcr6cgweftl6u6WSkxL0CX.tDG6ABDYqGopA8Mzx.grupdyrGizOlMr1QhynzPhKYQRUSXNYRWvnqtbgbXGnSsJ7axNX9QVUR70o9qa3qWGw6CRUwPcTxzH4A
+Host: www.chdtp.com
+Origin: https://www.chdtp.com
+Referer: https://www.chdtp.com/zbcg/cggl/displayCgbjAction.action
+sec-ch-ua: ".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Sec-Fetch-Dest: iframe
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36
+
+cgdv.cgbt=value

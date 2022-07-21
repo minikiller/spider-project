@@ -15,3 +15,31 @@ def get_cookies(browser):
     for cookie in selenium_cookies:
         cookies[cookie['name']] = cookie['value']
     return cookies
+
+# 在指定文件中替换指定内容
+def replaceFile(filename,source,target):
+
+    #read input file
+    with open(filename, "rt") as fin:
+        #read file contents to string
+        data = fin.read()
+        #replace all occurrences of the required string
+        data = data.replace(source, target)
+    
+    #open the input file in write mode
+    with open(filename, "wt") as fin:
+        #overrite the input file with the resulting data
+        fin.write(data)
+
+
+def downloadFile(url, filename):
+    import requests
+    r = requests.get(url, allow_redirects=True)
+    try:
+        with open(filename, 'wb') as f:
+            f.write(r.content)
+    except Exception as e:
+        print(e)
+
+if __name__ == '__main__':
+    replaceFile("./20220719/6HRNR020220700298.html")

@@ -1,4 +1,4 @@
-# 华润
+# 国家电投
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -34,14 +34,52 @@ prefs = {"profile.managed_default_content_settings.images": 2}
 chrome_options.add_experimental_option("prefs", prefs)
 
 user_agent = UserAgent(verify_ssl=False).random
-# options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
+options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
 options.add_argument(f'user-agent={user_agent}')
 browser = webdriver.Chrome(options=options)
 
-url = "https://b2b.crpower.com.cn/ispweb/pcux5PonHeaders/souringIndex.do?sourcetag=WZ"
+url = "https://ebid.espic.com.cn/bidweb/#/procurement/enquiryPaticipation"
 browser.get(url)
 original_window = browser.current_window_handle
 total_link = []
+
+
+def downloadPdf(url, filename):
+    pdfUrl = 'https://ebid.espic.com.cn/bidprocurement/common-tools/tools/commonUpload/readImageRoot?imagePath={}'.format(
+        url)
+    logger.info(pdfUrl)
+    import requests
+    r = requests.get(pdfUrl, allow_redirects=True)
+    total_link.append(f'{curDate}/{filename}.pdf')
+    open(f'{curDate}/{filename}.pdf', 'wb').write(r.content)
+
+
+def getFileInfo(token, bizId):
+    url = "https://ebid.espic.com.cn/bidprocurement/common-tools/tools/commonUpload/getFileDetail?bizId={}&fileType=bulletin_template_pdf_base&t=1658210556127".format(
+        bizId)
+    # Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json"}
+    Headers = {"X-AUTH-TOKEN": token, "Content-Type": "application/json",
+               "User-Agent": str(user_agent)}
+    res = requests.get(url, headers=Headers, timeout=120)
+
+    return res.json()
+
+
+def callData(token, value, pageNo):
+    import requests
+    url = "https://ebid.espic.com.cn/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage"
+    # Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json"}
+    Headers = {"X-AUTH-TOKEN": token, "Content-Type": "application/json",
+               "User-Agent": str(user_agent)}
+
+    data = {"tenderName": value,
+            "tenderMethod": "11",
+            "pageNo": pageNo,
+            "pageSize": 50,
+            "state": "01"}
+    res = requests.post(url, json=data, headers=Headers, timeout=120)
+
+    return res.json()
 
 
 def getResultData(fileName):
@@ -65,24 +103,25 @@ def getResultData(fileName):
 
 
 class element_has_value(object):
-  """An expectation for checking that an element has a particular css class.
+    """An expectation for checking that an element has a particular css class.
 
-  locator - used to find the element
-  returns the WebElement once it has the particular css class
-  """
+    locator - used to find the element
+    returns the WebElement once it has the particular css class
+    """
 
-  def __init__(self, locator):
-    self.locator = locator
+    def __init__(self, locator):
+        self.locator = locator
 
-  def __call__(self, driver):
-    # Finding the referenced element
-    element = driver.find_element(*self.locator)
-    if  len(element.get_attribute("value")) > 0:
-        # curId=element.get_attribute("value")
-        # logger.info("curId:%s" % curId)
-        return element
-    else:
-        return False
+    def __call__(self, driver):
+        # Finding the referenced element
+        element = driver.find_element(*self.locator)
+        if len(element.get_attribute("value")) > 0:
+            # curId=element.get_attribute("value")
+            # logger.info("curId:%s" % curId)
+            return element
+        else:
+            return False
+
 
 def getData(id):
     # cookies = util.get_cookies(browser)
@@ -94,8 +133,9 @@ def getData(id):
     # sleep(randint(1,3))
     idPath = '//*[@id="souDeatilNum"]'
     dataPath = '//*[@id="detail_info_grid"]/div[2]/table/tbody/tr/td[3]'
-    input=WebDriverWait(browser, 20).until(element_has_value((By.XPATH, idPath)))
-    curId=input.get_attribute("value")
+    input = WebDriverWait(browser, 20).until(
+        element_has_value((By.XPATH, idPath)))
+    curId = input.get_attribute("value")
     print("curId:%s" % curId)
 
     # WebDriverWait(browser, 20).until(EC.presence_of_element_located(
@@ -181,17 +221,41 @@ def get_details(res):
 # totalPage=50
 pageSize = 20
 user_agent = UserAgent(verify_ssl=False).random
-res = get_posts(1, pageSize)
+token = browser.get_cookie("X-AUTH-TOKEN")["value"]
+print(token)
+# res = get_posts(1, pageSize)
 # print()
-totalPage = res['totalCount']
+totalPage = 0
+for value in strList:
+    datas = callData(token, value, 1)
+    count = datas['data']['total']
+    if count>0:
+        logger.info(f"'{value}'找到记录")
+    else:
+        logger.info(f"'{value}'没有找到记录")
+    totalPage = totalPage+count
+    for data in datas['data']['records']:
+        bizId = data['bizId']
+        tenderNo = data['tenderNo']
+        projectBuyersName = data['projectBuyersName']
+        tenderName = data['tenderName']
+        logger.info(f"Tender Name is {tenderName}")
+        logger.debug(bizId)
+        result = getFileInfo(token, bizId)
+        path = result['data'][0]['path']
+        logger.debug(path)
+        downloadPdf(path, tenderNo+"-"+projectBuyersName)
 
-for i in util.getPage(int(totalPage), pageSize):
-    logger.info(f"current processing page {i},current no is {i*pageSize}")
-    res = get_posts(i, pageSize)
-    get_details(res)
+
+# totalPage = res['totalCount']
+
+# for i in util.getPage(int(totalPage), pageSize):
+#     logger.info(f"current processing page {i},current no is {i*pageSize}")
+#     res = get_posts(i, pageSize)
+#     get_details(res)
 
 logger.info('#'*50)
-logger.info(f'总共处理记录数：{totalPage}')
-logger.info(f'总共过滤获得的记录数：{len(resultList)}')
+logger.info(f'总共处理记录数：{len(strList)}')
+logger.info(f'总共过滤获得的记录数：{totalPage}')
 use_time = int(time.time()) - int(start_time)
 logger.info(f'爬取总计耗时：{use_time}秒')

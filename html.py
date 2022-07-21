@@ -9,10 +9,13 @@ import os
 def exportHtml(str, fileName):
     str1 = str.splitlines()  # remove /r/n
     # open file in write mode
-    with open(fileName, 'w', encoding='utf-8') as fp:
-        for item in str1:
-            # write each item on a new line
-            fp.write("%s\n" % item)
+    try:
+        with open(fileName, 'w', encoding='utf-8') as fp:
+            for item in str1:
+                # write each item on a new line
+                fp.write("%s\n" % item)
+    except IOError:
+        print("Error: can\'t find file or read data")
         # print(f'finish write to {fileName}, Done')
 
 

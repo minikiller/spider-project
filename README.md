@@ -1,8 +1,9 @@
 # spider-project
 
-https://maps.kartoza.com/geoserver/wms?SERVICE=WMS&INFO_FORMAT=application%2Fjson&LAYERS=altitude&QUERY_LAYERS=altitude&FEATURE_COUNT=10&BBOX=31.396201370893717%2C-24.456190281345222%2C31.396398629106283%2C-24.45600971865369&WIDTH=101&HEIGHT=101&REQUEST=GetFeatureInfo&I=50&j=50
-https://maps.kartoza.com/geoserver/wms?SERVICE=WMS&INFO_FORMAT=application%2Fjson&LAYERS=altitude&QUERY_LAYERS=altitude&FEATURE_COUNT=10&BBOX=31.396201370893717%2C-24.456190281345222%2C31.396398629106283%2C-24.45600971865369&WIDTH=101&HEIGHT=101&REQUEST=GetFeatureInfo&I=50&j=50
-
+### 大唐 
+大唐集团公司http://www.cdt-ec.com，
+账号密码：ccglyb/ccglyb2931147
+run: four.py
 
 ### taobao 
 login 
@@ -12,15 +13,34 @@ https://login.taobao.com/member/login.jhtml
 #### 相关文档
 1.run.sh 启动chrome的remote debugger模式
 2.debug.py 连接chrome的debugger，这样解决了自动登陆的问题
-
+run:1688.py 1688search.py
 
 ###  中船重工电子采购平台
 url="http://www.ebuy.csemc.com"
 _username='ccglyb'
 _password='Cc2931147'
+run: center.py
 
-### 华润 
-https://b2b.crpower.com.cn/ 
-按照日期（最近两天）查询 
-ccglyb/2931147
+### 国家电投	
+https://ebid.espic.com.cn	
+2931147ccglyb	
+cc_lili@163.com
+run: ebid.py
 
+### 国能E购	
+https://www.neep.shop/	
+ccglyb	
+Chenjiao2931147*
+
+### 华电	
+https://www.chdtp.com	
+gengshuang	
+ccglyb2931147
+run:dian
+
+### 华能	
+http://ec.chng.com.cn/ecmall/	
+jlccs0006	
+Cc_lili@163.com
+
+run:neng.py
