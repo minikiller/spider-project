@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
+import logging
 
-### 返回索引数组
+### 返回关键字索引数组
 
 def getIndex():
 
@@ -20,7 +21,7 @@ def getIndex():
         # print('Column Contents : ', columnSeriesObj.values) 
         for value in columnSeriesObj.values:
             data.append(value) 
-    print(data)
+    logging.debug(f"查询关键字: {data}")
     return data
 
 # str中的字符串是否包含中strList数组中

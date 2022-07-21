@@ -17,13 +17,14 @@ import index
 import html
 import time
 import util
-import logger
+import logging
+import log_setup
 import requests
 from fake_useragent import UserAgent
 
 
 # browser = getDriver()
-
+log_setup.main("info")
 strList = index.getIndex()
 # strList.append("电焊条")
 curDate = html.getCurDate()
@@ -86,11 +87,11 @@ def getDetail(announcementId):
     id = data.xpath(idPath)[0].text
     filename = f"./{curDate}/{id}.html"
     html.exportHtml(response.text, filename)
-    logger.info(f"{filename} 导出成功")
+    logging.info(f"{filename} 导出成功")
     attachPath = '/html/body/div[4]/div/div[4]/div/div/div[1]/div[4]/p/a'
     attachs = data.xpath(attachPath) # 获取附件
     if len(attachs)>0:
-        logger.info(f"附件个数：{len(attachs)}")
+        logging.info(f"附件个数：{len(attachs)}")
         for attach in attachs:
             attachUrl = attach.get("href")
             attachName = attach.text
@@ -99,15 +100,15 @@ def getDetail(announcementId):
                 attachName = f"{curDate}/{id}_{attachName}"
                 import util
                 util.downloadFile(attachUrl, attachName)
-                logger.info(f"附件{attachName} 导出成功")
+                logging.info(f"附件{attachName} 导出成功")
     else:
-        logger.info(f"附件为空")
+        logging.info(f"附件为空")
     totalPage = totalPage+1
     # print(res)
 
 
 def search(value):
-    logger.info(f"{value} 查询到{value}条数据")
+    logging.info(f"{value} 查询到{value}条数据")
     myurl = "http://ec.chng.com.cn/ecmall/more.do"
     request_body = {"type": 107,
                     "searchWay": "onTitle",
@@ -130,26 +131,26 @@ def search(value):
     data = etree.HTML(response.text)
     totalPath = '//*[@id="viewPageSize"]'
     total = 10 #data.xpath(totalPath)[0].text
-    logger.info(f"{value} 查询到{total}条数据")
+    logging.info(f"{value} 查询到{total}条数据")
     if int(total) > 0:
-        logger.warning(f"'{value}'找到记录,共{total}条")
+        logging.warning(f"'{value}'找到记录,共{total}条")
         aPath = '//*[@id="pageForm"]/ul/li/a'
         links = data.xpath(aPath)
         for link in links:
             string = link.get('href')
-            print(string)
+            logging.debug(f'href string is: {string}')
 
-            # logger.debug(string)
+            # logging.debug(string)
             pattern = re.compile(r"'(\w+)'")  # 提取单引号内的数据
             result = pattern.findall(string)  # 提取到的数据是个列表
-            logger.debug(result)
+            logging.debug(f'express value is : {result}')
             # # ["A61FC431667610A6DC2BD4225A623D295C3671AD2D256322','3','GJ202207007476','','','"]
             authField = result[0]
             # cgfs = result[1]
             # cgdh = result[2]
             getDetail(authField)
     else:
-        logger.info(f"{value} 没有数据")
+        logging.info(f"{value} 没有数据")
 
 
 # token = browser.get_cookie("X-AUTH-TOKEN")["value"]
@@ -174,15 +175,15 @@ for value in strList:
 # totalPage = res['totalCount']
 
 # for i in util.getPage(int(totalPage), pageSize):
-#     logger.info(f"current processing page {i},current no is {i*pageSize}")
+#     logging.info(f"current processing page {i},current no is {i*pageSize}")
 #     res = get_posts(i, pageSize)
 #     get_details(res)
 # with open('data.txt','w') as f:
 #     for item in total_link:
 #         # write each item on a new line
 #         f.write("%s\n" % item)
-logger.info('#'*50)
-logger.info(f'总共处理记录数：{len(strList)}')
-logger.info(f'总共过滤获得的记录数：{totalPage}')
+logging.info('#'*50)
+logging.info(f'总共处理记录数：{len(strList)}')
+logging.info(f'总共过滤获得的记录数：{totalPage}')
 use_time = int(time.time()) - int(start_time)
-logger.info(f'爬取总计耗时：{use_time}秒')
+logging.info(f'爬取总计耗时：{use_time}秒')

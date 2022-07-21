@@ -33,6 +33,7 @@ class Dian():
         self.resultList = []  # 存放结果
         self.cookies = {}
         self.value=value
+        self.totalPage=0
         # curId=""
 
         options = Options()
@@ -70,7 +71,7 @@ class Dian():
 
 
     def getDetail(self,authField, cgfs, cgdh):
-        global totalPage
+        # global totalPage
 
         # cookies = util.get_cookies(browser)
         myurl = f"https://www.chdtp.com/zbcg/cggl/detailCgbjToAction.action?authField={authField}&cgfs={cgfs}&cgdh={cgdh}"
@@ -78,15 +79,15 @@ class Dian():
         headers = {"User-Agent": UserAgent(verify_ssl=False).random,
                 'Content-Type': 'application/x-www-form-urlencoded', }
 
-        response = requests.get(myurl, headers=headers, cookies=cookies)
+        response = requests.get(myurl, headers=headers, cookies=self.cookies)
         idPath = '//*[@id = "resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[2]'
 
         data = etree.HTML(response.text)
-        id = data.xpath(idPath)[0].text
+        id = data.xpath(idPath)[0].text.strip()
         filename = f"./{self.curDate}/{id}.html"
         html.exportHtml(response.text, filename)
         logger.info(f"{filename} 导出成功")
-        totalPage = totalPage+1
+        self.totalPage = self.totalPage+1
         # print(res)
 
 
@@ -103,7 +104,7 @@ class Dian():
         # sleep(randint(1, 3))
         res = response.text
         # 
-        html.exportHtml(res, f"./{self.curDate}/{self.value}.html")
+        # html.exportHtml(res, f"./{self.curDate}/{self.value}.html")
         print("status_code is ", response.status_code)
         # print(res)
         # return res
@@ -126,11 +127,13 @@ class Dian():
                 authField = result[0]
                 cgfs = result[1]
                 cgdh = result[2]
-                # getDetail(authField, cgfs, cgdh)
-                return (authField, cgfs, cgdh)
+                self.getDetail(authField, cgfs, cgdh)
+                # return (authField, cgfs, cgdh)
+            return True
         else:
             logger.info(f"{self.value} 没有数据")
-            return None
+            return False
+        
 
 
     # token = browser.get_cookie("X-AUTH-TOKEN")["value"]
@@ -138,13 +141,15 @@ class Dian():
     # # res = get_posts(1, pageSize)
     # # print()
     # totalPage = 0
+    
+    # 通过页面去搜索数据
     def doPage(self,value):
         inputPath = '//*[@id="id_cgbt"]'
         self.browser.find_element(By.XPATH, inputPath).send_keys(value)
         btnPath = '//*[@id="query"]'
         self.browser.find_element(By.XPATH, btnPath).click()
         self.browser.implicitly_wait(10)
-        sleep(20)
+        sleep(10)
         # totalPath = '//*[@id="Totalcount"]'
         # WebDriverWait(browser, 10).until(
         #     EC.presence_of_element_located((By.XPATH, totalPath)))
@@ -185,7 +190,7 @@ class Dian():
         original_window = self.browser.current_window_handle
         total_link = []
 
-        totalPage = 0
+        self.totalPage = 0
         pageSize = 20
         user_agent = UserAgent(verify_ssl=False).random
         self.cookies = util.get_cookies(self.browser)
@@ -205,7 +210,7 @@ class Dian():
         
         logger.info('#'*50)
         logger.info(f'总共处理记录数：{len(self.strList)}')
-        logger.info(f'总共过滤获得的记录数：{totalPage}')
+        logger.info(f'总共过滤获得的记录数：{self.totalPage}')
         use_time = int(time.time()) - int(self.start_time)
         logger.info(f'爬取总计耗时：{use_time}秒')
 def begin(value):
@@ -221,6 +226,6 @@ def multi():
         print(result)
 
 if __name__ == '__main__':
-    # import sys
-    # begin(sys.argv[1])
-    multi()
+    import sys
+    begin(sys.argv[1])
+    # multi()

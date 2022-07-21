@@ -2,6 +2,7 @@
 from lxml import etree
 import time
 import os
+import logging
 
 # from lxml import html
 
@@ -14,8 +15,8 @@ def exportHtml(str, fileName):
             for item in str1:
                 # write each item on a new line
                 fp.write("%s\n" % item)
-    except IOError:
-        print("Error: can\'t find file or read data")
+    except IOError as error:
+        logging.error(f"Save file error: {error}")
         # print(f'finish write to {fileName}, Done')
 
 
@@ -23,7 +24,7 @@ def exportTempHtml(str, fileName):
     try:
         os.mkdir("./tmp")
     except OSError as error:
-        print(error)
+        logging.warning(f"File dir is existed: {error}")
     str1 = str.splitlines()  # remove /r/n
     fileName = "./tmp/"+fileName
     # open file in write mode
@@ -72,9 +73,10 @@ def getCurDate():
     # date_str = time.strftime('%Y-%m-%d  %H:%M:%S', time.localtime())
     # print(date_str)
     try:
-        os.mkdir(date_str)
+        if not os.path.exists(date_str):
+            os.mkdir(date_str)
     except OSError as error:
-        print(error)
+        logging.error(f'create dir error: {error}')
     return date_str
 
 
