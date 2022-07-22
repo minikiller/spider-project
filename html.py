@@ -3,6 +3,7 @@ from lxml import etree
 import time
 import os
 import logging
+import config
 
 # from lxml import html
 
@@ -70,14 +71,15 @@ def outResultData(fileName):
 
 def getCurDate():
     date_str = time.strftime('%Y%m%d', time.localtime())
+    moduleName = config.getModuleName()
     # date_str = time.strftime('%Y-%m-%d  %H:%M:%S', time.localtime())
     # print(date_str)
+    path = moduleName+"/"+date_str
     try:
-        if not os.path.exists(date_str):
-            os.mkdir(date_str)
+        os.makedirs(path, exist_ok=True)
     except OSError as error:
         logging.error(f'create dir error: {error}')
-    return date_str
+    return path
 
 
 def getYesDate():

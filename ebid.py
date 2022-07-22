@@ -16,9 +16,13 @@ import index
 import html
 import time
 import util
-import logger
+import logging
 import requests
 from fake_useragent import UserAgent
+import log_setup
+import config
+
+log_setup.main("info")
 
 strList = index.getIndex()
 # strList.append("电焊条")
@@ -47,7 +51,7 @@ total_link = []
 def downloadPdf(url, filename):
     pdfUrl = 'https://ebid.espic.com.cn/bidprocurement/common-tools/tools/commonUpload/readImageRoot?imagePath={}'.format(
         url)
-    logger.info(pdfUrl)
+    logging.debug(pdfUrl)
     import requests
     r = requests.get(pdfUrl, allow_redirects=True)
     total_link.append(f'{curDate}/{filename}.pdf')
@@ -117,7 +121,7 @@ class element_has_value(object):
         element = driver.find_element(*self.locator)
         if len(element.get_attribute("value")) > 0:
             # curId=element.get_attribute("value")
-            # logger.info("curId:%s" % curId)
+            # logging.info("curId:%s" % curId)
             return element
         else:
             return False
@@ -164,7 +168,7 @@ def getData(id):
     # print(len(datas),"#############")
     for data in datas:
         title = data.text
-        logger.info("get data is "+title)
+        logging.info("get data is "+title)
         if index.indexOfStr(data.text, strList):
             filename = f'./{curDate}/{curId}.html'
             imgfilename = f'./{curDate}/{curId}.png'
@@ -201,7 +205,7 @@ def get_posts(pageNumber, pageSize):
 
 
 def get_details(res):
-    # logger.debug(res.json())
+    # logging.debug(res.json())
     # html = etree.HTML(res.text)
     for data in res["data"]:
 
@@ -210,11 +214,11 @@ def get_details(res):
         # buttons=html.xpath(path)
         # buttons=browser.find_elements(By.XPATH,linkPath)
         # print(len(buttons),"size is ")
-        # logger.debug(f"size is {len(buttons)}")
+        # logging.debug(f"size is {len(buttons)}")
         # href=button.get("href")
         id = data['attribute5']
         # str=curUrl.format(id)
-        logger.debug(id)
+        logging.debug(id)
         getData(id)
 
 
@@ -229,33 +233,33 @@ totalPage = 0
 for value in strList:
     datas = callData(token, value, 1)
     count = datas['data']['total']
-    if count>0:
-        logger.info(f"'{value}'找到记录")
+    if count > 0:
+        logging.info(f"'{value}'找到{count}记录")
     else:
-        logger.info(f"'{value}'没有找到记录")
+        logging.warning(f"'{value}'没有找到记录")
     totalPage = totalPage+count
     for data in datas['data']['records']:
         bizId = data['bizId']
         tenderNo = data['tenderNo']
         projectBuyersName = data['projectBuyersName']
         tenderName = data['tenderName']
-        logger.info(f"Tender Name is {tenderName}")
-        logger.debug(bizId)
+        logging.info(f"Tender Name is {tenderName}")
+        logging.debug(bizId)
         result = getFileInfo(token, bizId)
         path = result['data'][0]['path']
-        logger.debug(path)
+        logging.debug(path)
         downloadPdf(path, tenderNo+"-"+projectBuyersName)
 
 
 # totalPage = res['totalCount']
 
 # for i in util.getPage(int(totalPage), pageSize):
-#     logger.info(f"current processing page {i},current no is {i*pageSize}")
+#     logging.info(f"current processing page {i},current no is {i*pageSize}")
 #     res = get_posts(i, pageSize)
 #     get_details(res)
 
-logger.info('#'*50)
-logger.info(f'总共处理记录数：{len(strList)}')
-logger.info(f'总共过滤获得的记录数：{totalPage}')
+logging.info('#'*50)
+logging.info(f'总共处理记录数：{len(strList)}')
+logging.info(f'总共过滤获得的记录数：{totalPage}')
 use_time = int(time.time()) - int(start_time)
-logger.info(f'爬取总计耗时：{use_time}秒')
+logging.info(f'爬取总计耗时：{use_time}秒')

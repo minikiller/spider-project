@@ -19,13 +19,15 @@ import index
 import html
 import time
 import util
-import logger
+import logging
 import requests
 from fake_useragent import UserAgent
+import log_setup
 
 class Dian():
     # browser = getDriver()
     def __init__(self,value):
+        log_setup.main()
         self.strList = index.getIndex()
         # strList.append("电焊条")
         self.curDate = html.getCurDate()
@@ -86,13 +88,13 @@ class Dian():
         id = data.xpath(idPath)[0].text.strip()
         filename = f"./{self.curDate}/{id}.html"
         html.exportHtml(response.text, filename)
-        logger.info(f"{filename} 导出成功")
+        logging.info(f"{filename} 导出成功")
         self.totalPage = self.totalPage+1
         # print(res)
 
 
     def search(self):
-        logger.info(f"{self.value} 查询到{self.value}条数据")
+        logging.info(f"{self.value} 查询到{self.value}条数据")
         myurl = "https://www.chdtp.com/zbcg/cggl/displaysCgbjAction.action"
         request_body = {"cgdv.cgbt": self.value}
         import agent
@@ -111,18 +113,18 @@ class Dian():
         data = etree.HTML(response.text)
         totalPath = '//*[@id="Totalcount"]'
         total = data.xpath(totalPath)[0].get("value")
-        logger.info(f"{self.value} 查询到{total}条数据")
+        logging.info(f"{self.value} 查询到{total}条数据")
         if int(total) > 0:
-            logger.warning(f"'{self.value}'找到记录,共{total}条")
+            logging.warning(f"'{self.value}'找到记录,共{total}条")
             aPath = '//*[@id="id_table"]/tr/td[2]/a'
             links = data.xpath(aPath)
             for link in links:
                 # print(link.text)
                 string = link.get('onclick')
-                logger.debug(string)
+                logging.debug(string)
                 pattern = re.compile(r"'(\w+)'")  # 提取单引号内的数据
                 result = pattern.findall(string)  # 提取到的数据是个列表
-                logger.debug(result)
+                logging.debug(result)
                 # ["A61FC431667610A6DC2BD4225A623D295C3671AD2D256322','3','GJ202207007476','','','"]
                 authField = result[0]
                 cgfs = result[1]
@@ -131,7 +133,7 @@ class Dian():
                 # return (authField, cgfs, cgdh)
             return True
         else:
-            logger.info(f"{self.value} 没有数据")
+            logging.info(f"{self.value} 没有数据")
             return False
         
 
@@ -162,7 +164,7 @@ class Dian():
         for link in links:
             print(link.text)
             # string = link.get('onclick')
-            # logger.debug(stri)
+            # logging.debug(stri)
 
 
     # search("长春锅炉")
@@ -178,7 +180,7 @@ class Dian():
     # totalPage = res['totalCount']
 
     # for i in util.getPage(int(totalPage), pageSize):
-    #     logger.info(f"current processing page {i},current no is {i*pageSize}")
+    #     logging.info(f"current processing page {i},current no is {i*pageSize}")
     #     res = get_posts(i, pageSize)
     #     get_details(res)
     # with open('data.txt','w') as f:
@@ -208,11 +210,11 @@ class Dian():
         # for proc in procs:
         #     proc.join()
         
-        logger.info('#'*50)
-        logger.info(f'总共处理记录数：{len(self.strList)}')
-        logger.info(f'总共过滤获得的记录数：{self.totalPage}')
+        logging.info('#'*50)
+        logging.info(f'总共处理记录数：{len(self.strList)}')
+        logging.info(f'总共过滤获得的记录数：{self.totalPage}')
         use_time = int(time.time()) - int(self.start_time)
-        logger.info(f'爬取总计耗时：{use_time}秒')
+        logging.info(f'爬取总计耗时：{use_time}秒')
 def begin(value):
     dian = Dian(value)
     dian.main()

@@ -1,3 +1,5 @@
+import logging
+
 def getPage(totalPage,pageSize):
     data=totalPage//pageSize
     if (totalPage%pageSize)>0:
@@ -38,8 +40,9 @@ def downloadFile(url, filename):
     try:
         with open(filename, 'wb') as f:
             f.write(r.content)
+        logging.info(f"{filename} 下载成功")
     except Exception as e:
-        print(e)
+        logging.error(f"{filename} 下载失败,错误是: {e}")
 
 if __name__ == '__main__':
     replaceFile("./20220719/6HRNR020220700298.html")

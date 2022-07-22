@@ -36,7 +36,12 @@ https://www.chdtp.com
 
 run:dian
 
+#### how to
+
+> use tools.py to create batch.sh file,then run batch.sh file to get result
+
 ### 华能
 http://ec.chng.com.cn/ecmall/
 
 run:neng.py
+

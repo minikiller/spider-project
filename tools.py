@@ -9,6 +9,8 @@ def create():
             # write each item on a new line
             fp.write("python dian.py %s\n" % item)
 def test():
+    # logger = logging.getLogger(__name__)
+    # logger = logging 
     logging.debug("Debug message")
     logging.info("Info message")
     logging.warning("Warning message")
@@ -16,7 +18,19 @@ def test():
     logging.critical("Critical message")
 
 
+# logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+#                     datefmt='%Y-%m-%d:%H:%M:%S',
+#                     level=logging.DEBUG)
+
+# logger = logging.getLogger(__name__)
+# logger.debug("This is a debug log")
+# logger.info("This is an info log")
+# logger.critical("This is critical")
+# logger.error("An error occurred")
+
 if __name__ == '__main__':
     log_setup.main("info","debug")
+    import html
+    html.getCurDate()
     # create()
     test()
