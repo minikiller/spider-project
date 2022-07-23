@@ -1,6 +1,6 @@
 # 华电
 import multiprocessing
-from multiprocessing.dummy import Process ,Pool
+from multiprocessing.dummy import Process, Pool
 import re
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -23,10 +23,12 @@ import logging
 import requests
 from fake_useragent import UserAgent
 import log_setup
+import sys
+
 
 class Dian():
     # browser = getDriver()
-    def __init__(self,value):
+    def __init__(self, value):
         log_setup.main()
         self.strList = index.getIndex()
         # strList.append("电焊条")
@@ -34,8 +36,8 @@ class Dian():
         self.start_time = time.time()
         self.resultList = []  # 存放结果
         self.cookies = {}
-        self.value=value
-        self.totalPage=0
+        self.value = value
+        self.totalPage = 0
         # curId=""
 
         options = Options()
@@ -43,21 +45,19 @@ class Dian():
         prefs = {"profile.managed_default_content_settings.images": 2}
         chrome_options.add_experimental_option("prefs", prefs)
 
-        user_agent = UserAgent(verify_ssl=False).random
+        self.user_agent = UserAgent(verify_ssl=False).random
         options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
         # options.add_argument("--proxy-server=http://127.0.0.1:1087")
-        options.add_argument(f'user-agent={user_agent}')
+        options.add_argument(f'user-agent={self.user_agent}')
         self.browser = webdriver.Chrome(options=options)
 
         self.url = "https://www.chdtp.com/zbcg/cggl/displayCgbjAction.action"
         # self.url = "https://www.chdtp.com/"
         # url = "https://www.chdtp.com/zbcg/cggl/detailCgbjToAction.action?authField=6442EC39BB4BC38F62C2763DE5CF190A89FDA9FDA9FDA9F8&cgfs=3&cgdh=GJ202207003431"
 
-        
     # print(cookies)
 
     # html.exportHtml(browser.page_source, "./dian.html")
-
 
     def close_window():
         pass
@@ -71,46 +71,62 @@ class Dian():
         # browser.switch_to.window(original_window)
         # return links
 
-
-    def getDetail(self,authField, cgfs, cgdh):
+    def getDetail(self, authField, cgfs, cgdh):
         # global totalPage
 
         # cookies = util.get_cookies(browser)
         myurl = f"https://www.chdtp.com/zbcg/cggl/detailCgbjToAction.action?authField={authField}&cgfs={cgfs}&cgdh={cgdh}"
 
         headers = {"User-Agent": UserAgent(verify_ssl=False).random,
-                'Content-Type': 'application/x-www-form-urlencoded', }
+                   'Content-Type': 'application/x-www-form-urlencoded', }
 
         response = requests.get(myurl, headers=headers, cookies=self.cookies)
-        idPath = '//*[@id = "resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[2]'
-
         data = etree.HTML(response.text)
+
+        idPath = '//*[@id = "resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[2]'
         id = data.xpath(idPath)[0].text.strip()
-        filename = f"./{self.curDate}/{id}.html"
-        html.exportHtml(response.text, filename)
-        logging.info(f"{filename} 导出成功")
+        durDatePath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[2]/td[6]'
+        durDate = util.compDate(data.xpath(durDatePath)[0].text.strip()) 
+        companyPath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[2]/td[4]'
+        company = data.xpath(companyPath)[0].text.strip()
+        titlePath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[4]'
+        title = data.xpath(titlePath)[0].text.strip()
+
+        self.fullpath = f"./{self.curDate}/{durDate}-{company}-{title}-{id}"
+        self.exportHtml(response.text, id)
+        logging.info(f"{id} 导出成功")
         self.totalPage = self.totalPage+1
         # print(res)
 
+    def exportHtml(self, source,  id):
+
+        import os
+        try:
+            os.makedirs(self.fullpath, exist_ok=True)
+        except OSError as error:
+            logging.error(f'create dir error: {error}')
+        with open(f'./{self.fullpath}/{id}.html', "w") as f:
+            f.write(source)
+            logging.info(f"{id} 保存成功")
 
     def search(self):
         logging.info(f"{self.value} 查询到{self.value}条数据")
         myurl = "https://www.chdtp.com/zbcg/cggl/displaysCgbjAction.action"
         request_body = {"cgdv.cgbt": self.value}
-        import agent
-        headers = {"User-Agent": agent.getHeader(),
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Referer': 'https: // www.chdtp.com/zbcg/cggl/displayCgbjAction.action'}
+        # import agent
+        headers = {"User-Agent": self.user_agent,
+                   'Content-Type': 'application/x-www-form-urlencoded',
+                   'Referer': 'https: // www.chdtp.com/zbcg/cggl/displayCgbjAction.action'}
         response = requests.post(myurl, data=request_body,
                                  headers=headers, cookies=self.cookies)
         # sleep(randint(1, 3))
         res = response.text
-        # 
+        #
         # html.exportHtml(res, f"./{self.curDate}/{self.value}.html")
         print("status_code is ", response.status_code)
         # print(res)
         # return res
-        data = etree.HTML(response.text)
+        data = etree.HTML(res)
         totalPath = '//*[@id="Totalcount"]'
         total = data.xpath(totalPath)[0].get("value")
         logging.info(f"{self.value} 查询到{total}条数据")
@@ -135,17 +151,16 @@ class Dian():
         else:
             logging.info(f"{self.value} 没有数据")
             return False
-        
-
 
     # token = browser.get_cookie("X-AUTH-TOKEN")["value"]
     # print(token)
     # # res = get_posts(1, pageSize)
     # # print()
     # totalPage = 0
-    
+
     # 通过页面去搜索数据
-    def doPage(self,value):
+
+    def doPage(self, value):
         inputPath = '//*[@id="id_cgbt"]'
         self.browser.find_element(By.XPATH, inputPath).send_keys(value)
         btnPath = '//*[@id="query"]'
@@ -166,16 +181,14 @@ class Dian():
             # string = link.get('onclick')
             # logging.debug(stri)
 
-
     # search("长春锅炉")
     # sleep(4)
     # search("温度计")
     # sleep(5)
-    
+
     # for value in strList:
     # sleep(randint(1, 3))
     # search(value)
-
 
     # totalPage = res['totalCount']
 
@@ -187,14 +200,15 @@ class Dian():
     #     for item in total_link:
     #         # write each item on a new line
     #         f.write("%s\n" % item)
+
     def main(self):
         self.browser.get(self.url)
-        original_window = self.browser.current_window_handle
+        self.original_window = self.browser.current_window_handle
         total_link = []
 
         self.totalPage = 0
         pageSize = 20
-        user_agent = UserAgent(verify_ssl=False).random
+        self.user_agent = UserAgent(verify_ssl=False).random
         self.cookies = util.get_cookies(self.browser)
         names = ['长春锅炉', '液位计']
         procs = []
@@ -209,15 +223,19 @@ class Dian():
 
         # for proc in procs:
         #     proc.join()
-        
+
         logging.info('#'*50)
         logging.info(f'总共处理记录数：{len(self.strList)}')
         logging.info(f'总共过滤获得的记录数：{self.totalPage}')
         use_time = int(time.time()) - int(self.start_time)
         logging.info(f'爬取总计耗时：{use_time}秒')
+
+
 def begin(value):
     dian = Dian(value)
     dian.main()
+
+
 def multi():
     # names = ['长春锅炉', '液位计']
     names = ['液位计']
@@ -227,7 +245,7 @@ def multi():
     for result in results:
         print(result)
 
+
 if __name__ == '__main__':
-    import sys
     begin(sys.argv[1])
-    # multi()
+    # multi() # 用于单独测试

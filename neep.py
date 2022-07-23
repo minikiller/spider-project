@@ -23,170 +23,187 @@ from fake_useragent import UserAgent
 import log_setup
 
 
-log_setup.main()
-strList = index.getIndex()
-# strList.append("电焊条")
-curDate = html.getCurDate()
-start_time = time.time()
-resultList = []  # 存放结果
-cookies = {}
-# curId=""
+class Neep(object):
 
-options = Options()
-chrome_options = webdriver.ChromeOptions()
-prefs = {"profile.managed_default_content_settings.images": 2}
-chrome_options.add_experimental_option("prefs", prefs)
+    def __init__(self) -> None:
+        log_setup.main()
+        self.strList = index.getIndex()
+        # strList.append("电焊条")
+        self.curDate = html.getCurDate()
+        self.start_time = time.time()
+        self.resultList = []  # 存放结果
+        self.cookies = {}
+        # curId=""
 
-user_agent = UserAgent(verify_ssl=False).random
-options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
-options.add_argument(f'user-agent={user_agent}')
-browser = webdriver.Chrome(options=options)
+        options = Options()
+        chrome_options = webdriver.ChromeOptions()
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        chrome_options.add_experimental_option("prefs", prefs)
 
-url = "https://www.neep.shop/dist/index.html#/purchaserNoticeIndex"
-browser.get(url)
-original_window = browser.current_window_handle
-total_link = []
+        user_agent = UserAgent(verify_ssl=False).random
+        options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
+        options.add_argument(f'user-agent={user_agent}')
+        self.browser = webdriver.Chrome(options=options)
 
-totalPage = 0
-pageSize = 20
-user_agent = UserAgent(verify_ssl=False).random
-cookies = util.get_cookies(browser)
+        url = "https://www.neep.shop/dist/index.html#/purchaserNoticeIndex"
+        self.browser.get(url)
+        self.original_window = self.browser.current_window_handle
+        self.total_link = []
 
+        self.totalPage = 0
+        self.pageSize = 20
+        self.user_agent = UserAgent(verify_ssl=False).random
+        self.cookies = util.get_cookies(self.browser)
 
-def close_window(inquiryCode):
-    links = []
-    for handle in browser.window_handles:
-        if handle != original_window:
-            browser.switch_to.window(handle)
-            labelPath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[1]/div/label'
-            tablePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[3]/div[2]/div/div[2]/table/tbody/tr/td[2]'
+    def close_window(self, inquiryCode):
+        links = []
+        for handle in self.browser.window_handles:
+            if handle != self.original_window:
+                self.browser.switch_to.window(handle)
+                labelPath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[1]/div/label'
+                tablePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[3]/div[2]/div/div[2]/table/tbody/tr/td[2]'
 
-            # WebDriverWait(browser, 10).until(
-            #     EC.presence_of_element_located((By.XPATH, tablePath)))
+                # WebDriverWait(browser, 10).until(
+                #     EC.presence_of_element_located((By.XPATH, tablePath)))
 
-            WebDriverWait(browser, 20).until(EC.text_to_be_present_in_element(
-                (By.XPATH, labelPath), inquiryCode) and EC.presence_of_element_located((By.XPATH, tablePath)))
+                WebDriverWait(self.browser, 20).until(EC.text_to_be_present_in_element(
+                    (By.XPATH, labelPath), inquiryCode) and EC.presence_of_element_located((By.XPATH, tablePath)))
+                projectNamePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[2]/div/label'
+                projectName = self.browser.find_element(By.XPATH, projectNamePath).text
+                durDatePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[7]/div/label'
+                durDate = util.compDate(self.browser.find_element(
+                    By.XPATH, durDatePath).text.strip())
+                # source=browser.page_source
+                self.fullpath = f'{self.curDate}/{durDate}-{projectName}-{inquiryCode}'
+                self.exportHtml(self.browser.page_source,inquiryCode)
+                # print(browser.current_url)
+                links.append(self.browser.current_url)
+                self.browser.close()
+        self.browser.switch_to.window(self.original_window)
+        return links
 
-            # source=browser.page_source
-            # html.exportHtml(source,)
-            with open(f'./{curDate}/{inquiryCode}.html', "w") as f:
-                f.write(browser.page_source)
-                logging.info(f"{inquiryCode} 保存成功")
-            # print(browser.current_url)
-            links.append(browser.current_url)
-            browser.close()
-    browser.switch_to.window(original_window)
-    return links
+    def exportHtml(self, source,  inquiryCode):
+        
+        import os
+        try:
+            os.makedirs(self.fullpath, exist_ok=True)
+        except OSError as error:
+            logging.error(f'create dir error: {error}')
+        with open(f'./{self.fullpath}/{inquiryCode}.html', "w") as f:
+            f.write(source)
+            logging.info(f"{inquiryCode} 保存成功")
 
+    def getDetail(self, inquiryId, passkey):
+        # cookies = util.get_cookies(browser)
+        myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierIqrPurchaseNoticeDetail"
+        request_body = {"inquiryId": int(inquiryId),
+                        "iqrSeq": 1, "purchaseCategory": 1}
+        logging.debug(request_body)
+        headers = {"User-Agent": self.user_agent, "Referer": "https: // www.neep.shop/dist/index.html",
+                   'Content-Type': 'application/x-www-form-urlencoded', 'passkey': passkey}
+        logging.debug(headers)
+        response = requests.post(myurl, data=request_body,
+                                 headers=headers, cookies=self.cookies)
+        # sleep(randint(1,3))
+        res = response.json()
+        # for data in res['data']['attchmentInfo1']:
+        #     logging.debug("attchmentInfo1")
+        #     print(data['attachmentUrl'])
+        #     print(data['attachmentName'])
+        for data in res['data']['attchmentInfo2']:
+            logging.debug("attchmentInfo2")
+            logging.debug(data['attachmentUrl'])
+            logging.debug(data['attachmentName'])
 
-def getDetail(inquiryId, passkey):
-    # cookies = util.get_cookies(browser)
-    myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierIqrPurchaseNoticeDetail"
-    request_body = {"inquiryId": int(inquiryId),
-                    "iqrSeq": 1, "purchaseCategory": 1}
-    logging.debug(request_body)
-    headers = {"User-Agent": user_agent, "Referer": "https: // www.neep.shop/dist/index.html",
-               'Content-Type': 'application/x-www-form-urlencoded', 'passkey': passkey}
-    logging.debug(headers)
-    response = requests.post(myurl, data=request_body,
-                             headers=headers, cookies=cookies)
-    # sleep(randint(1,3))
-    res = response.json()
-    # for data in res['data']['attchmentInfo1']:
-    #     logging.debug("attchmentInfo1")
-    #     print(data['attachmentUrl'])
-    #     print(data['attachmentName'])
-    for data in res['data']['attchmentInfo2']:
-        logging.debug("attchmentInfo2")
-        logging.debug(data['attachmentUrl'])
-        logging.debug(data['attachmentName'])
+            util.downloadFile(data['attachmentUrl'],
+                              self.fullpath + "/" + data['attachmentName'])
+        # for data in res['data']['attchmentInfo3']:
+        #     logging.debug("attchmentInfo3")
+        #     print(data['attachmentUrl'])
+        #     print(data['attachmentName'])
+        # for data in res['data']['attchmentInfo4']:
+        #     logging.debug("attchmentInfo4")
+        #     print(data['attachmentUrl'])
+        #     print(data['attachmentName'])
 
-        util.downloadFile(data['attachmentUrl'],
-                          curDate + "/" + data['attachmentName'])
-    # for data in res['data']['attchmentInfo3']:
-    #     logging.debug("attchmentInfo3")
-    #     print(data['attachmentUrl'])
-    #     print(data['attachmentName'])
-    # for data in res['data']['attchmentInfo4']:
-    #     logging.debug("attchmentInfo4")
-    #     print(data['attachmentUrl'])
-    #     print(data['attachmentName'])
-
-    # print(res)
-
-
-def search(value):
-    global totalPage
-    myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierQryIqrPurchaseNoticeList"
-    request_body = {"pageNo": 1,
-                    "pageSize": 50,
-                    "inquiryName": value}
-    headers = {"User-Agent": user_agent,
-               'Content-Type': 'application/x-www-form-urlencoded'}
-    response = requests.post(myurl, data=request_body,
-                             headers=headers, cookies=cookies)
-    # sleep(randint(1,3))
-    res = response.json()
-    logging.debug(res)
-    count = res['data']['recordsTotal']
-    # print(count)
-    if count > 0:
-        totalPage = totalPage+count
-        logging.warning(f"'{value}'找到记录,共{count}条")
-    else:
-        logging.info(f"'{value}'没有找到记录")
-    for data in res['data']['rows']:
-        inquiryCode = data['inquiryCode']  # 询价单号
-        inquiryId = data['inquiryId']
-        inquiryName = data['inquiryName']
-        if(inquiryName.find(value) > 1):  # 如果包含查询值
-            passkey = data['passkey']
-            detailUrl = f'https://www.neep.shop/dist/index.html#/purchaserNoticeDetail/1/{inquiryId}/1?backPage=purchaserNoticeIndex&joinable=true&receivedClarify=0&passkey={passkey}'
-            # logging.info(f"{inquiryCode} {inquiryName} {detailUrl}")
-            str = f"window.open('{detailUrl}');"
-            # str = f"window.open('{detailUrl}','_blank');"
-            logging.debug(str)
-            browser.execute_script(str)
-            # browser.implicitly_wait(10)
-            # browser.tab_new(detailUrl)
-            # browser.get(detailUrl)
-            total_link.append(detailUrl)
-            # sleep(3)
-            # browser.get("http://sina.com")
-            # print(browser.current_url)
-            # sleep(3)
-
-            close_window(inquiryCode)
-            getDetail(inquiryId, passkey)
+        # print(res)
+    # 按照搜索条件进行搜索
+    def search(self, value):
+        myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierQryIqrPurchaseNoticeList"
+        request_body = {"pageNo": 1,
+                        "pageSize": 50,
+                        "inquiryName": value}
+        headers = {"User-Agent": self.user_agent,
+                   'Content-Type': 'application/x-www-form-urlencoded'}
+        response = requests.post(myurl, data=request_body,
+                                 headers=headers, cookies=self.cookies)
+        # sleep(randint(1,3))
+        res = response.json()
+        logging.debug(res)
+        count = res['data']['recordsTotal']
+        # print(count)
+        if count > 0:
+            self.totalPage = self.totalPage+count
+            logging.warning(f"'{value}'找到记录,共{count}条")
         else:
-            totalPage = totalPage-1
-            logging.warning(f"不包括查询值：'{value}'")
+            logging.info(f"'{value}'没有找到记录")
+            return 
+        for data in res['data']['rows']:
+            inquiryCode = data['inquiryCode']  # 询价单号
+            inquiryId = data['inquiryId']
+            inquiryName = data['inquiryName']
+            if(inquiryName.find(value) > 1):  # 如果包含查询值
+                passkey = data['passkey']
+                detailUrl = f'https://www.neep.shop/dist/index.html#/purchaserNoticeDetail/1/{inquiryId}/1?backPage=purchaserNoticeIndex&joinable=true&receivedClarify=0&passkey={passkey}'
+                # logging.info(f"{inquiryCode} {inquiryName} {detailUrl}")
+                str = f"window.open('{detailUrl}');"
+                # str = f"window.open('{detailUrl}','_blank');"
+                logging.debug(str)
+                self.browser.execute_script(str)
+                # browser.implicitly_wait(10)
+                # browser.tab_new(detailUrl)
+                # browser.get(detailUrl)
+                self.total_link.append(detailUrl)
+                # sleep(3)
+                # browser.get("http://sina.com")
+                # print(browser.current_url)
+                # sleep(3)
+
+                self.close_window(inquiryCode)
+                self.getDetail(inquiryId, passkey)
+            else:
+                self.totalPage = self.totalPage-1
+                logging.warning(f"不包括查询值：'{value}'")
+
+    # token = browser.get_cookie("X-AUTH-TOKEN")["value"]
+    # print(token)
+    # # res = get_posts(1, pageSize)
+    # # print()
+    # totalPage = 0
+
+    def main(self):
+        # self.search("液位计")
+
+        for value in self.strList:
+            sleep(randint(1, 3))
+            self.search(value)
+
+        # totalPage = res['totalCount']
+        # for i in util.getPage(int(totalPage), pageSize):
+        #     logging.info(f"current processing page {i},current no is {i*pageSize}")
+        #     res = get_posts(i, pageSize)
+        #     get_details(res)
+        # with open('data.txt', 'w') as f:
+        #     for item in total_link:
+        #         # write each item on a new line
+        #         f.write("%s\n" % item)
+        logging.info('#'*50)
+        logging.info(f'总共处理记录数：{len(self.strList)}')
+        logging.info(f'总共过滤获得的记录数：{self.totalPage}')
+        use_time = int(time.time()) - int(self.start_time)
+        logging.info(f'爬取总计耗时：{use_time}秒')
 
 
-# token = browser.get_cookie("X-AUTH-TOKEN")["value"]
-# print(token)
-# # res = get_posts(1, pageSize)
-# # print()
-# totalPage = 0
-# search("液位计")
-
-for value in strList:
-    sleep(randint(1, 3))
-    search(value)
-
-
-# totalPage = res['totalCount']
-
-# for i in util.getPage(int(totalPage), pageSize):
-#     logging.info(f"current processing page {i},current no is {i*pageSize}")
-#     res = get_posts(i, pageSize)
-#     get_details(res)
-# with open('data.txt', 'w') as f:
-#     for item in total_link:
-#         # write each item on a new line
-#         f.write("%s\n" % item)
-logging.info('#'*50)
-logging.info(f'总共处理记录数：{len(strList)}')
-logging.info(f'总共过滤获得的记录数：{totalPage}')
-use_time = int(time.time()) - int(start_time)
-logging.info(f'爬取总计耗时：{use_time}秒')
+if __name__ == '__main__':
+    neep = Neep()
+    neep.main()

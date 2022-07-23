@@ -28,9 +28,14 @@ def test():
 # logger.critical("This is critical")
 # logger.error("An error occurred")
 
+def getit():
+    string="20121212 12:12:12"
+    print(string[:8])
+
 if __name__ == '__main__':
-    log_setup.main("info","debug")
-    import html
-    html.getCurDate()
-    # create()
-    test()
+    # log_setup.main("info","debug")
+    # import html
+    # html.getCurDate()
+    # # create()
+    # test()
+    getit()
