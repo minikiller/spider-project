@@ -6,86 +6,121 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-import time, re
+import time
+import re
 from lxml import etree
 from selenium.webdriver.chrome.options import Options
+import logging
+import log_setup
+import html
+from random import randint
+from time import sleep
+
 
 class Four():
-    def callData(self,token,  pageNo):
-        import requests
-        url="https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage"
-        # Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json"}
-        Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json","User-Agent": str(self.user_agent)}
-
-        data={
-            "tenderMethod": "11",
-            "pageNo": pageNo,
-            "pageSize": 10,
-            "state": "01"
-        }
-        res=requests.post(url,json=data,headers=Headers,timeout=120)
-        
-        return res.json()
-
-    def getInfo(self,token):
-        import html,index
-        import progressbar
-        p = progressbar.ProgressBar()
-        date=html.getCurDate() #获得当前日期
-        strList=index.getIndex()
-        res=self.callData(token,1)
-        # print(res["data"])
-        # total=res.data.total 
-        pages=res["data"]["pages"]
-        # pages=2
-
-        for i in p(range(1,pages)):
-            res=self.callData(token,i)
-            for j in res["data"]["records"]:
-                packId=j["packId"]
-                tenderNo=j["tenderNo"]+" "+j["tenderName"]
-                # print("packId is: ",packId)
-                result=self.getDetail(token,packId)
-                content=result["data"]["contentText"]
-                # print("content is: ",content)
-                fileName=f"{date}/{tenderNo}.html"
-                data=html.getResultContent(content) 
-                for item in data:
-                    # print("开始处理字符串：",item.text)
-                    if index.indexOfStr(item.text,strList):
-                        html.exportHtml(content,fileName) 
-                        html.outResultData(fileName)
-                        break  
-                time.sleep(0.1)
-
-    def getDetail(self,token,packId):
-        import requests
-        url=f"https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId={packId}"
-        Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json","User-Agent": str(self.user_agent)}
-        
-        res=requests.post(url,headers=Headers,timeout=120)
-        # print(res.json())
-        return res.json()
-
     def __init__(self):
         # options.add_argument("window-size=1400,600")
+        log_setup.main()
         from fake_useragent import UserAgent
         self.user_agent = UserAgent(verify_ssl=False).random
         self.header = {"User-Agent": {self.user_agent}}
         # self.agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
         # header = {"User-Agent": str(self.user_agent)}
-        print(self.user_agent)
+        logging.debug(self.user_agent)
+        self.curDate = html.getCurDate()
+
+    def callData(self, token,  pageNo):
+        import requests
+        url = "https://buy.cdt-ec.com/bidprocurement/procurement-protproject/procurementProject/canParticipateInTheProjectPage"
+        # Headers = { "X-AUTH-TOKEN" : token, "Content-Type": "application/json"}
+        Headers = {"X-AUTH-TOKEN": token, "Content-Type": "application/json",
+                   "User-Agent": str(self.user_agent)}
+
+        data = {
+            "tenderMethod": "11",
+            "pageNo": pageNo,
+            "pageSize": 10,
+            "state": "01"
+        }
+        res = requests.post(url, json=data, headers=Headers, timeout=120)
+
+        return res.json()
+
+    def getInfo(self, token):
+        import html
+        import index
+        import progressbar
+        p = progressbar.ProgressBar()
+        date = html.getCurDate()  # 获得当前日期
+        strList = index.getIndex()
+        res = self.callData(token, 1)
+        # print(res["data"])
+        # total=res.data.total
+        pages = res["data"]["pages"]
+        # pages=2
+
+        for i in p(range(1, pages)):
+            res = self.callData(token, i)
+            # logging.info(res)
+            for j in res["data"]["records"]:
+                packId = j["packId"]
+                tenderNo = j["tenderNo"]
+                quoteEndTime = j["quoteEndTime"][:10]
+                tenderName = j["tenderName"]
+                # print("packId is: ",packId)
+                # sleep(randint(1, 3))
+                result = self.getDetail(token, packId)
+                if result!=None:
+                    content = result["data"]["contentText"]
+                    
+                    # print("content is: ",content)
+                    # fileName = f"{date}/{tenderNo}.html"
+                    data = html.getResultContent(content)
+                    for item in data:
+                        # print("开始处理字符串：",item.text)
+                        if index.indexOfStr(item.text, strList):
+                            self.fullpath = f'{self.curDate}/{quoteEndTime}-{tenderNo}-{tenderName}'
+
+                            self.exportHtml(content, tenderNo)
+                            # html.outResultData(fileName)
+                            break
+                    time.sleep(0.1)
+
+    def exportHtml(self, source, tenderNo):
+
+        import os
+        try:
+            os.makedirs(self.fullpath, exist_ok=True)
+        except OSError as error:
+            logging.error(f'create dir error: {error}')
+        with open(f'./{self.fullpath}/{tenderNo}.html', "w") as f:
+            f.write(source)
+            logging.info(f"{tenderNo} 保存成功")
+
+    def getDetail(self, token, packId):
+        try:
+            import requests
+            url = f"https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId={packId}"
+            Headers = {"X-AUTH-TOKEN": token, "Content-Type": "application/json",
+                    "User-Agent": str(self.user_agent)}
+
+            res = requests.post(url, headers=Headers, timeout=(3,7))
+        except Exception as e:
+            logging.error(f"{packId} 请求失败，原因：{e}")
+            return None
+        # print(res.json())
+        return res.json()
 
     def main(self):
         # 开始时间
         start_time = time.time()
-        _username="ccglyb"
-        _password="ccglyb2931147"
-        url="http://www.cdt-ec.com"
+        _username = "ccglyb"
+        _password = "Ccglyb2931147#"
+        url = "http://www.cdt-ec.com"
         # url="https://www.cdt-ec.com/cpu-portal-fe/login1.html"
         # ，账号密码：ccglyb/
         options = Options()
-        
+
         options.add_argument(f'user-agent={self.user_agent}')
         options.add_experimental_option("detach", True)
         browser = webdriver.Chrome(options=options)
@@ -95,7 +130,8 @@ class Four():
             # nextBt = browser.find_element(By.XPATH,'//*[@id="ywmk"]/div[1]/div[2]')
             # nextBt.click()
             # /html/body/div[3]/div[2]/ul[2]/button[3]
-            login=browser.find_element(By.XPATH,'/html/body/div[3]/div[2]/ul[2]/button[3]')
+            # /html/body/div[4]/div[2]/ul[2]/button[3]
+            login = browser.find_element(By.XPATH, '//button[3]')
             login.click()
             # login=browser.find_element(By
             # .CSS_SELECTOR,'button.loginloginapply').click()
@@ -104,19 +140,20 @@ class Four():
             # browser.implicitly_wait(10)
             original_window = browser.current_window_handle
 
-            username = browser.find_element(By.ID,'username')
+            username = browser.find_element(By.ID, 'username')
             # username = browser.find_element((By.XPATH,'//*[@id="uid"]'))
-            password = browser.find_element(By.ID,'password')
+            password = browser.find_element(By.ID, 'password')
             # password = browser.find_element((By.XPATH,'//*[@id="kl"]'))
             # code = browser.find_element(By.ID,'checkCode')  //*[@id="kl"]
             # code=input("please input:")
-            username.send_keys(_username)  
-            password.send_keys(_password)  
+            username.send_keys(_username)
+            password.send_keys(_password)
             # print(code)
-            
+
             # inputCode = browser.find_element(By.ID,'randCode')
-            # inputCode.send_keys(code)  
-            loginBt = browser.find_element(By.XPATH,'//*[@id="submit_btn_login"]')
+            # inputCode.send_keys(code)
+            loginBt = browser.find_element(
+                By.XPATH, '//*[@id="submit_btn_login"]')
         # //*[@id="submit_btn_login"]
             loginBt.click()
             # time.sleep(1)
@@ -128,12 +165,14 @@ class Four():
             # time.sleep(1)
 
             # https://buy.cdt-ec.com/bidweb/#/procurement/procurementDesktopSupplier
-            WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="ywmk"]/div[1]/div[2]/a')))
+            WebDriverWait(browser, 10).until(EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="ywmk"]/div[1]/div[2]/a')))
         # //*[@id="ywmk"]/div[1]/div[2]/a
         # //*[@id="ywmk"]/div[1]/div[2]
         # //*[@id="ywmk"]/div[1]/div[2]
             # nextBt = browser.find_element(By.XPATH,'//*[@id="ywmk"]/div[1]/div[2]/a/div/div')
-            browser.execute_script("window.open(document.location.protocol+'//buy.cdt-ec.com/bidprocurement/datacenter-dangtfz/dtLoginCenterController/ssoRedirectUrl?loginType=USER','_blank')")
+            browser.execute_script(
+                "window.open(document.location.protocol+'//buy.cdt-ec.com/bidprocurement/datacenter-dangtfz/dtLoginCenterController/ssoRedirectUrl?loginType=USER','_blank')")
 
             # nextBt = browser.find_element(By.XPATH,'//*[@id="ywmk"]/div[1]/div[2]/a')
             # //*[@id="ywmk"]/div[1]/div[2]/a
@@ -161,31 +200,33 @@ class Four():
                 if window_handle != original_window:
                     browser.switch_to.window(window_handle)
                     break
-            wait = WebDriverWait(browser, 10).until( lambda x:  "大唐电子商务平台非招标采购平台" in browser.title)
+            wait = WebDriverWait(browser, 10).until(
+                lambda x:  "大唐电子商务平台非招标采购平台" in browser.title)
             # wait = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="DataTables_Table_0"]/tbody/tr[1]/td[1]')))
             # EC.title_contains("Page 1")
             # href = html.xpath('//*[@class="wrap m-test5-wrap f-pr f-cb"]/a/@href')
-            # print(href)    
+            # print(href)
             # url="https://buy.cdt-ec.com/bidweb/#/procurement/enquiryPaticipation"
             # browser.get(url)
             # browser.implicitly_wait(10)
             page_text = browser.page_source
             # print(browser.get_cookies())
             html = etree.HTML(page_text)
-            token=browser.get_cookie("X-AUTH-TOKEN")["value"]
-            print(token)
-            print(browser.current_url)
+            token = browser.get_cookie("X-AUTH-TOKEN")["value"]
+            logging.debug(token)
+            logging.debug(browser.current_url)
             # data=callData(token,10)
             self.getInfo(token)
             # print(data)
         finally:
-            browser.close()
-            browser.quit()
+            # browser.close()
+            # browser.quit()
             use_time = int(time.time()) - int(start_time)
-            print("\n")
-            print(f'爬取总计耗时：{use_time}秒')
-            pass
+            logging.info("\n")
+            logging.info(f'爬取总计耗时：{use_time}秒')
+
+
 if __name__ == '__main__':
-    data=Four()
+    data = Four()
     data.main()
     # pass

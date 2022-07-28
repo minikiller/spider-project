@@ -38,7 +38,7 @@ def exportTempHtml(str, fileName):
 def getResultContent(content):
     tree = etree.HTML(content)
     # print(tree)
-    href = tree.xpath("/html/body/div/div/table/tr/td[2]")
+    href = tree.xpath("//table/tr/td[2]")
     # /html/body/div/div/table/tbody/tr[1]/td[2]
     # for value in href:
     #     # print(value.text)

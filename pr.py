@@ -1,0 +1,21 @@
+class Animal:
+    def __init__(self,name) -> None:
+        self.name=name
+class Dog:
+    total=100
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        return "Woof!"
+
+dog1=Dog("Fido")
+dog2=Dog("Buddy")
+dog1.total=200
+print(Dog.total)
+print(dog1.total)
+# print(Dog.name)
+# print(dog2.name)
+
+str = "11658737370754t409wWrGtxJY09BmwIrNLOqCDEy9aEmgRk8JeIWihu2cJ1ua1eKZaX6xd14zeX8FZsxMg4yKnkWV0T4a4npDjNghvVhNwostkin/hU5nAxhzHqclRBFjiZXjDoxCS2GpEmsgYWnza+id5B8b3Jh/5S+ef3BHjdB6LwxrW88o3uaziHfJRAvF7uXi+y5it2Atx9+WGAkuUzpPMbBE9p9UOwHReQ4erD44o5FCNmF6wg+oPsX7ccv7exwm62ARD0FLAVola2JSp9cPssV6sSBTyv5iTqHUIytIaoOwz2ZXwkKBowf0EYU/X6eb/usf5cYFmsglpo/BcVrL+41hE2Tb3KFNuF3cSTlwSCC+qLcfzDNd8Jbh8WR64ezQQ7gSEiC5IMq9poz9sT7Uc2llCPhf7J+brVSwse3AsdzpIEQZT3AQvI26OGlMjdcEhsZJPL5IXXD5An5FSgXWtC4JH6hKHHskwY0orUr3V3Dqogi2MI9ZxwpLp3rWdR+eXBuKFI23pG4knaBPYLHaYEcKyk4KBOF/7PgSAOg7mvS+NXrAk++Il2PMJ7RGkYHAYb/Hv4wuVfYwr0glhGZVZC8WmRrFfvZCFv2AOuXRQ5ByAun0q7DbK3hSD4Gf7rTvLV8JV+JzmdkcGoqmkOExWfOrx5Mna0w6fe2IOQddBhTcXCQDrByydSrnnmm9NCo/vIes9e0aAVAXVum9sxvKCU42J7ALg43HAAUnWT66YKO8mrKG01Q8w825XcFlDzll2MS1pRslQdfUKwcxXX+Wo+z12ZjqTsQPcxT9qQg8vFOEBPiVGp0LOY+NgrBF3CPt5m3cSGoFHkVjnrNmahC+uCsruo4iIkMu/U8g9j/Eb8ZyGHcqRBSjpiCrzi2G4nDjtrfhsaf/AK/I0gMSzDMJoMPnaeVvzorzI58EXVdjAaRIvktuLu+UFQOYbdKuEYf5x9dLzDVnqHQg9UN4za6KmmObPGPH9o92P8i9Vn6zdbJzUvsqEAMSgXSd7W0QLktA+KwMfH7s3WEdx03btOwuvevGZdLUB/Eibys1inwbiT/PS90tNU8CijnqzHw0SyvNLCS8AjPgrYfnwgYM1/ElQ/7rM0MLJb42f54RsQW6bqYBhV0Ze4pEYL1186urbfXjsKznGLYxVVNewJ97fPkLQqpfnRcPiAn+oQ5SDGUlOPJsrSdtJENmaolZL7N53DFgDNm+Xjz7sbReeFuuU8w/KEf2wGV9PxqbFQllPItWX2aooy5+QytJaHDcMPpih9+L7NBv3uyWf6Q/yglqXAL+b5Qb3TeIBg217lURZ823R738crbA54YugCAE+xikyHsaapjaDNP5X+aaeZsHbwQgEYWP5d9o7mjQ+KK/W11hvwGmTkgJ2nl3cPl5o++3rMAT7ysGM27LvaLqjodO2LNc9OsbMEhiRWPDJ2vRUyYgAnCPFsf7P6tEn1zh6dqGj3QxY8MADSLis43bAqOAs0IHL4fe3u14GegaGxA=="
+print(len(str))

@@ -129,17 +129,23 @@ class Neep(object):
         # print(res)
     # 按照搜索条件进行搜索
     def search(self, value):
+                                                            #  inquiry/quote/encryptSupplierQryIqrQuoteList
         myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierQryIqrPurchaseNoticeList"
         request_body = {"pageNo": 1,
                         "pageSize": 50,
                         "inquiryName": value}
         headers = {"User-Agent": self.user_agent,
                    'Content-Type': 'application/x-www-form-urlencoded'}
+        secret={
+            'secretParams':
+            '5DxFNrO8cnhRgJ1zp2kzp0d%2B7RSInue0g0DyQia60%2BmqHJkIbvDgrB3bz8ZkJjtUuVW70X1yjxiw0gbRaeOinA%3D%3D'
+        }
         response = requests.post(myurl, data=request_body,
                                  headers=headers, cookies=self.cookies)
         # sleep(randint(1,3))
         res = response.json()
         logging.debug(res)
+        print(res)
         count = res['data']['recordsTotal']
         # print(count)
         if count > 0:
@@ -180,9 +186,11 @@ class Neep(object):
     # # res = get_posts(1, pageSize)
     # # print()
     # totalPage = 0
+    def test(self):
+        self.search("液位计")
 
     def main(self):
-        # self.search("液位计")
+        
 
         for value in self.strList:
             sleep(randint(1, 3))
@@ -206,4 +214,5 @@ class Neep(object):
 
 if __name__ == '__main__':
     neep = Neep()
-    neep.main()
+    # neep.main()
+    neep.test()
