@@ -92,7 +92,8 @@ class Neng():
 
         durDatePath = '/html/body/div[4]/div/div[4]/div/div/div[1]/table[2]/tr[3]/td[4]'
         # durDatePath = '//*[@class="min_tablehz"][2]//tr[3]/td[4]'
-        durDate = util.compDate(data.xpath(durDatePath)[0].text.strip())
+        durDate = data.xpath(durDatePath)[0].text.strip()
+        durDate = util.compDate(durDate)
                     #    /html/body/div[4]/div/div[4]/div/div/div[1]/table[1]/tbody/tr[1]/td[2]
         # /html/body/div[4]/div/div[4]/div/div/div[1]/table[1]/tbody/tr[1]/td[2]
         companyPath = '//*[@class="min_tl245"]'
@@ -111,7 +112,6 @@ class Neng():
                 if attachUrl is not None:
                     attachUrl = f"http://ec.chng.com.cn{attachUrl}"
                     attachName = f"{self.fullpath}/{attachName}"
-                    import util
                     util.downloadFile(attachUrl, attachName)
                     logging.info(f"附件{attachName} 导出成功")
         else:

@@ -96,7 +96,7 @@ class Four():
             os.makedirs(self.fullpath, exist_ok=True)
         except OSError as error:
             logging.error(f'create dir error: {error}')
-        with open(f'./{self.fullpath}/{tenderNo}.html', "w") as f:
+        with open(f'./{self.fullpath}/{tenderNo}.html', "w", encoding='utf-8') as f:
             f.write(source)
             logging.info(f"{tenderNo} 保存成功")
 
