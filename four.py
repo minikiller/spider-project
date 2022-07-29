@@ -15,11 +15,14 @@ import log_setup
 import html
 from random import randint
 from time import sleep
+from dotenv import load_dotenv
+import os
 
 
 class Four():
     def __init__(self):
         # options.add_argument("window-size=1400,600")
+        load_dotenv()
         log_setup.main()
         from fake_useragent import UserAgent
         self.user_agent = UserAgent(verify_ssl=False).random
@@ -70,9 +73,9 @@ class Four():
                 # print("packId is: ",packId)
                 # sleep(randint(1, 3))
                 result = self.getDetail(token, packId)
-                if result!=None:
+                if result != None:
                     content = result["data"]["contentText"]
-                    
+
                     # print("content is: ",content)
                     # fileName = f"{date}/{tenderNo}.html"
                     data = html.getResultContent(content)
@@ -102,9 +105,9 @@ class Four():
             import requests
             url = f"https://buy.cdt-ec.com/bidprocurement/procurement-bulletin/procurementBulletin/viewProcurementBulletin?packId={packId}"
             Headers = {"X-AUTH-TOKEN": token, "Content-Type": "application/json",
-                    "User-Agent": str(self.user_agent)}
+                       "User-Agent": str(self.user_agent)}
 
-            res = requests.post(url, headers=Headers, timeout=(3,7))
+            res = requests.post(url, headers=Headers, timeout=(3, 7))
         except Exception as e:
             logging.error(f"{packId} 请求失败，原因：{e}")
             return None
@@ -114,8 +117,8 @@ class Four():
     def main(self):
         # 开始时间
         start_time = time.time()
-        _username = "ccglyb"
-        _password = "Ccglyb2931147#"
+        _username = os.getenv("username")
+        _password = os.getenv("password")
         url = "http://www.cdt-ec.com"
         # url="https://www.cdt-ec.com/cpu-portal-fe/login1.html"
         # ，账号密码：ccglyb/
