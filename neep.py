@@ -143,6 +143,7 @@ class Neep(object):
         response = requests.post(myurl, data=request_body,
                                  headers=headers, cookies=self.cookies)
         # sleep(randint(1,3))
+        print(response.text)
         res = response.json()
         logging.debug(res)
         print(res)

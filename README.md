@@ -36,6 +36,8 @@ https://www.chdtp.com
 
 run:dian
 
+> 使用 batch.sh 批量执行
+
 #### how to
 
 > use tools.py to create batch.sh file,then run batch.sh file to get result

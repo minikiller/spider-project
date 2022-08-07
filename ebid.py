@@ -225,6 +225,45 @@ class Ebid():
             # str=curUrl.format(id)
             logging.debug(id)
             self.getData(id)
+    def test(self,value):
+        self.totalPage = 0
+        token = self.browser.get_cookie("X-AUTH-TOKEN")["value"]
+        
+        datas = self.callData(token, value, 1)
+        # print(datas)
+        count = datas['data']['total']
+        if count > 0:
+            logging.info(f"'{value}'找到{count}记录")
+        else:
+            logging.warning(f"'{value}'没有找到记录")
+        self.totalPage = self.totalPage+count
+        for data in datas['data']['records']:
+            bizId = data['bizId']
+            tenderNo = data['tenderNo']
+            projectBuyersName = data['projectBuyersName']
+            tenderName = data['tenderName']
+            quoteEndTime = util.compDate(data['quoteEndTime'][:19])
+            self.fullpath = f"{self.curDate}/{quoteEndTime}-{projectBuyersName}-{tenderName}-{tenderNo}"
+            logging.info(f"Tender Name is {tenderName}")
+            logging.debug(bizId)
+            result = self.getFileInfo(token, bizId)
+            if len(result['data']) > 0:
+                path = result['data'][0]['path']
+                logging.debug(path)
+                self.downloadPdf(path, tenderNo)
+
+        # totalPage = res['totalCount']
+
+        # for i in util.getPage(int(totalPage), pageSize):
+        #     logging.info(f"current processing page {i},current no is {i*pageSize}")
+        #     res = get_posts(i, pageSize)
+        #     get_details(res)
+
+        logging.info('#'*50)
+        logging.info(f'总共处理记录数：{len(self.strList)}')
+        logging.info(f'总共过滤获得的记录数：{self.totalPage}')
+        use_time = int(time.time()) - int(self.start_time)
+        logging.info(f'爬取总计耗时：{use_time}秒')
 
     def main(self):
         # totalPage=50
@@ -248,14 +287,15 @@ class Ebid():
                 tenderNo = data['tenderNo']
                 projectBuyersName = data['projectBuyersName']
                 tenderName = data['tenderName']
-                quoteEndTime = util.compDate(data['quoteEndTime'])
+                quoteEndTime = util.compDate(data['quoteEndTime'][:19])
                 self.fullpath = f"{self.curDate}/{quoteEndTime}-{projectBuyersName}-{tenderName}-{tenderNo}"
                 logging.info(f"Tender Name is {tenderName}")
                 logging.debug(bizId)
                 result = self.getFileInfo(token, bizId)
-                path = result['data'][0]['path']
-                logging.debug(path)
-                self.downloadPdf(path, tenderNo)
+                if len(result['data']) > 0:
+                    path = result['data'][0]['path']
+                    logging.debug(path)
+                    self.downloadPdf(path, tenderNo)
 
 
         # totalPage = res['totalCount']
@@ -274,5 +314,5 @@ class Ebid():
 
 if __name__ == '__main__':
     ebid = Ebid()
-    # neng.test()
-    ebid.main()
+    ebid.test('孔板')
+    # ebid.main()

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import logging
+import codecs
 
 
 def getPage(totalPage, pageSize):
@@ -55,6 +56,7 @@ def downloadFile(url, filename):
 
 def compDate(_date):
     tmpDate = _date[:10]+" 09:00:00"
+    print(_date)
     sourceDate = datetime.strptime(_date, "%Y-%m-%d %H:%M:%S")
     targetDate = datetime.strptime(tmpDate, "%Y-%m-%d %H:%M:%S")
     print(sourceDate, targetDate)
@@ -64,7 +66,22 @@ def compDate(_date):
         return (sourceDate + timedelta(days=-1)).strftime("%Y-%m-%d")
 
 
+def ReadFile(filePath, encoding="utf-8"):
+    with codecs.open(filePath, "r", encoding) as f:
+        return f.read()
+
+
+def WriteFile(filePath, u, encoding="gbk"):
+    with codecs.open(filePath, "w", encoding) as f:
+        f.write(u)
+
+
+def UTF8_2_GBK(src, dst):
+    content = ReadFile(src, encoding="utf-8")
+    WriteFile(dst, content, encoding="gbk")
+
 if __name__ == '__main__':
     # replaceFile("./20220719/6HRNR020220700298.html")
-    re = compDate("2022-07-26 09:19:53")
-    print(re)
+    # re = compDate("2022-07-26 09:19:53")
+    # print(re)
+    UTF8_2_GBK("batch.sh","batch.bat")
