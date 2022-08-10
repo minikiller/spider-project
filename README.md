@@ -57,3 +57,15 @@ run:neng.py
 
 ### 有待解决的问题
 * neng 的记录数取的不对
+
+
+### error
+
+requests.exceptions.SSLError: HTTPSConnectionPool(host='www.chdtp.com', port=443): Max retries exceeded with url: /zbcg/cggl/displaysCgbjAction.action (Caused by SSLError(SSLError(1, '[SSL: DH_KEY_TOO_SMALL] dh key too small (_ssl.c:997)')))
+
+
+### 字符集问题
+
+> <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
+
+### 中船搜索 水位计 错误

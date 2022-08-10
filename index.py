@@ -40,6 +40,6 @@ def indexOfStr(str,strList):
 
 if __name__ == '__main__':
     data=getIndex()
-    result=indexOfStr("水位sdfd",data)
+    result = indexOfStr("分谈-703所-无锡分部-锅炉汽包水位计", data)
     print(result)
 

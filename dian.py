@@ -86,7 +86,9 @@ class Dian():
         idPath = '//*[@id = "resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[2]'
         id = data.xpath(idPath)[0].text.strip()
         durDatePath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[2]/td[6]'
-        durDate = util.compDate(data.xpath(durDatePath)[0].text.strip()) 
+        value = data.xpath(durDatePath)[0].text.strip()+":00"
+        print("vake value", value)
+        durDate = util.compDate(value) 
         companyPath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[2]/td[4]'
         company = data.xpath(companyPath)[0].text.strip()
         titlePath = '//*[@id="resultForm"]/div/table/tr[2]/td[2]/table[2]/tr[1]/td[4]'

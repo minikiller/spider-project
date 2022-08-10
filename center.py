@@ -20,10 +20,10 @@ import logging
 import log_setup
 import requests
 from fake_useragent import UserAgent
-from base import BaseSpider
+# from base import BaseSpider
 
 
-class Center(BaseSpider):
+class Center():
     def __init__(self):
         log_setup.main()
         self.strList = index.getIndex()
@@ -86,7 +86,7 @@ class Center(BaseSpider):
         for data in datas:
             title = data.get('title')
             logging.debug(title)
-            if index.indexOfStr(data.text, self.strList):
+            if index.indexOfStr(title, self.strList):
                 # filename = f'./{self.curDate}/{id}.html'
                 self.fullpath = f'{self.curDate}/{durDate}-{id}-{mytitle}'
                 logging.info(self.fullpath)
@@ -147,7 +147,32 @@ class Center(BaseSpider):
         logging.info(f'总共过滤获得的记录数：{len(self.resultList)}')
         logging.info(f'爬取总计耗时：{use_time}秒')
 
+    def exportHtml(self, source, fileName):
+
+        import os
+        try:
+            os.makedirs(self.fullpath, exist_ok=True)
+        except OSError as error:
+            logging.error(f'create dir error: {error}')
+        with open(f'./{self.fullpath}/{fileName}.html', "w", encoding="utf-8") as f:
+            f.write(source)
+            logging.info(f"{fileName} 保存成功")
+        # self.changeFile(f'./{self.fullpath}/{fileName}.html')
+
+    def changeFile(self, source):
+        with open(source, "r", encoding="gb2312") as f:
+            contents = f.readlines()
+
+        data = '<meta http-equiv="Content-Type" content="text/html;charset=gb2312">'
+        contents.insert(8, data)
+
+        with open(source, "w", encoding="gb2312") as f:
+            for item in contents:
+                # write each item on a new line
+                f.write(item)
+
 
 if __name__ == '__main__':
     data = Center()
     data.main()
+    # changeFile("./XJ022080500778.html")
