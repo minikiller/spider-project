@@ -30,14 +30,14 @@ def get_cookies(browser):
 def replaceFile(filename, source, target):
 
     # read input file
-    with open(filename, "rt") as fin:
+    with open(filename, "rt", encoding="utf-8") as fin:
         # read file contents to string
         data = fin.read()
         # replace all occurrences of the required string
         data = data.replace(source, target)
 
     # open the input file in write mode
-    with open(filename, "wt") as fin:
+    with open(filename, "wt", encoding="utf-8") as fin:
         # overrite the input file with the resulting data
         fin.write(data)
 
@@ -46,13 +46,14 @@ def downloadFile(url, filename):
     import requests
     r = requests.get(url, allow_redirects=True)
     try:
-        with open(filename, 'wb') as f:
+        with open(filename, 'wb', encoding="utf-8") as f:
             f.write(r.content)
         logging.info(f"{filename} 下载成功")
     except Exception as e:
         logging.error(f"{filename} 下载失败,错误是: {e}")
 
 # 如果超过指定时间，则返回当前日期，否则返回提前一天的日期
+
 
 def compDate(_date):
     tmpDate = _date[:10]+" 09:00:00"
@@ -80,8 +81,9 @@ def UTF8_2_GBK(src, dst):
     content = ReadFile(src, encoding="utf-8")
     WriteFile(dst, content, encoding="gbk")
 
+
 if __name__ == '__main__':
     # replaceFile("./20220719/6HRNR020220700298.html")
     # re = compDate("2022-07-26 09:19:53")
     # print(re)
-    UTF8_2_GBK("batch.sh","batch.bat")
+    UTF8_2_GBK("batch.sh", "batch.bat")

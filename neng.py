@@ -94,7 +94,7 @@ class Neng():
         # durDatePath = '//*[@class="min_tablehz"][2]//tr[3]/td[4]'
         durDate = data.xpath(durDatePath)[0].text.strip()
         durDate = util.compDate(durDate)
-                    #    /html/body/div[4]/div/div[4]/div/div/div[1]/table[1]/tbody/tr[1]/td[2]
+        #    /html/body/div[4]/div/div[4]/div/div/div[1]/table[1]/tbody/tr[1]/td[2]
         # /html/body/div[4]/div/div[4]/div/div/div[1]/table[1]/tbody/tr[1]/td[2]
         companyPath = '//*[@class="min_tl245"]'
         company = data.xpath(companyPath)[0].text.strip()
@@ -126,7 +126,10 @@ class Neng():
             os.makedirs(self.fullpath, exist_ok=True)
         except OSError as error:
             logging.error(f'create dir error: {error}')
-        with open(f'./{self.fullpath}/{id}.html', "w") as f:
+        id = re.sub('[\/:*?"<>|]', '-', id)  # 去掉非法字符
+        fileName = f'./{self.fullpath}/{id}.html'
+
+        with open(fileName, "w", encoding="utf-8") as f:
             f.write(source)
             logging.info(f"{id} 保存成功")
 
@@ -190,11 +193,12 @@ class Neng():
 # search("液位计")
 # sleep(10)
 
+
     def test(self):
         self.search("物位仪表")
 
     def main(self):
-        
+
         for value in self.strList:
             # sleep(randint(1, 3))
             self.search(value)

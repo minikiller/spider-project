@@ -69,13 +69,14 @@ class Neep(object):
                 WebDriverWait(self.browser, 20).until(EC.text_to_be_present_in_element(
                     (By.XPATH, labelPath), inquiryCode) and EC.presence_of_element_located((By.XPATH, tablePath)))
                 projectNamePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[2]/div/label'
-                projectName = self.browser.find_element(By.XPATH, projectNamePath).text
+                projectName = self.browser.find_element(
+                    By.XPATH, projectNamePath).text
                 durDatePath = '//*[@id="app"]/div/div[3]/div[2]/div[2]/div/div[1]/div/div/form/div[7]/div/label'
                 durDate = util.compDate(self.browser.find_element(
                     By.XPATH, durDatePath).text.strip())
                 # source=browser.page_source
                 self.fullpath = f'{self.curDate}/{durDate}-{projectName}-{inquiryCode}'
-                self.exportHtml(self.browser.page_source,inquiryCode)
+                self.exportHtml(self.browser.page_source, inquiryCode)
                 # print(browser.current_url)
                 links.append(self.browser.current_url)
                 self.browser.close()
@@ -83,15 +84,37 @@ class Neep(object):
         return links
 
     def exportHtml(self, source,  inquiryCode):
-        
+
         import os
         try:
             os.makedirs(self.fullpath, exist_ok=True)
         except OSError as error:
             logging.error(f'create dir error: {error}')
-        with open(f'./{self.fullpath}/{inquiryCode}.html', "w") as f:
+        inquiryCode = re.sub('[\/:*?"<>|]', '-', inquiryCode)  # 去掉非法字符
+        fileName = f'./{self.fullpath}/{inquiryCode}.html'
+
+        with open(fileName, "w", encoding="utf-8") as f:
             f.write(source)
             logging.info(f"{inquiryCode} 保存成功")
+
+    def decypt(self, data):
+        import json
+        myurl = "http://localhost:3000/api/users"
+        headers = {
+            'Content-Type': 'application/json'}
+
+        bodys = {
+            "data": data,
+        }
+
+        response = requests.post(myurl, json=bodys,
+                                 headers=headers)
+        # sleep(randint(1,3))
+        # print(response.text)
+        res = response.json()
+        # print(type(res))
+        data = json.loads(res)
+        return data
 
     def getDetail(self, inquiryId, passkey):
         # cookies = util.get_cookies(browser)
@@ -105,7 +128,10 @@ class Neep(object):
         response = requests.post(myurl, data=request_body,
                                  headers=headers, cookies=self.cookies)
         # sleep(randint(1,3))
+
         res = response.json()
+        res = self.decypt(res['data'])
+        # print(res)
         # for data in res['data']['attchmentInfo1']:
         #     logging.debug("attchmentInfo1")
         #     print(data['attachmentUrl'])
@@ -127,26 +153,29 @@ class Neep(object):
         #     print(data['attachmentName'])
 
         # print(res)
-    # 按照搜索条件进行搜索
+
+   # 按照搜索条件进行搜索
+
     def search(self, value):
-                                                            #  inquiry/quote/encryptSupplierQryIqrQuoteList
+        #  inquiry/quote/encryptSupplierQryIqrQuoteList
         myurl = "https://www.neep.shop/rest/service/routing/inquiry/quote/encryptSupplierQryIqrPurchaseNoticeList"
         request_body = {"pageNo": 1,
                         "pageSize": 50,
                         "inquiryName": value}
         headers = {"User-Agent": self.user_agent,
                    'Content-Type': 'application/x-www-form-urlencoded'}
-        secret={
+        secret = {
             'secretParams':
             '5DxFNrO8cnhRgJ1zp2kzp0d%2B7RSInue0g0DyQia60%2BmqHJkIbvDgrB3bz8ZkJjtUuVW70X1yjxiw0gbRaeOinA%3D%3D'
         }
         response = requests.post(myurl, data=request_body,
                                  headers=headers, cookies=self.cookies)
         # sleep(randint(1,3))
-        print(response.text)
+        # print(response.text)
         res = response.json()
         logging.debug(res)
-        print(res)
+        # print(res)
+        res = self.decypt(res['data'])
         count = res['data']['recordsTotal']
         # print(count)
         if count > 0:
@@ -154,7 +183,7 @@ class Neep(object):
             logging.warning(f"'{value}'找到记录,共{count}条")
         else:
             logging.info(f"'{value}'没有找到记录")
-            return 
+            return
         for data in res['data']['rows']:
             inquiryCode = data['inquiryCode']  # 询价单号
             inquiryId = data['inquiryId']
@@ -166,7 +195,9 @@ class Neep(object):
                 str = f"window.open('{detailUrl}');"
                 # str = f"window.open('{detailUrl}','_blank');"
                 logging.debug(str)
-                self.browser.execute_script(str)
+                self.browser.switch_to.new_window('tab')
+                self.browser.get(detailUrl)
+                # self.browser.execute_script(str)
                 # browser.implicitly_wait(10)
                 # browser.tab_new(detailUrl)
                 # browser.get(detailUrl)
@@ -191,7 +222,6 @@ class Neep(object):
         self.search("液位计")
 
     def main(self):
-        
 
         for value in self.strList:
             sleep(randint(1, 3))
@@ -215,5 +245,5 @@ class Neep(object):
 
 if __name__ == '__main__':
     neep = Neep()
-    # neep.main()
-    neep.test()
+    neep.main()
+    # neep.test()

@@ -145,3 +145,7 @@ Upgrade-Insecure-Requests: 1
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36
 
 cgdv.cgbt=value
+
+###
+GET https://szecp.crc.com.cn/srm/api/ssrc/v1/58068/rfx-open/supplier/140531/items?page=0&size=10
+Authorization: bearer 89d1f4a0-63b9-48e0-b7b5-34e38996da70

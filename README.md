@@ -68,4 +68,22 @@ requests.exceptions.SSLError: HTTPSConnectionPool(host='www.chdtp.com', port=443
 
 > <meta http-equiv="Content-Type" content="text/html;charset=gb2312">
 
-### 中船搜索 水位计 错误
+已经解决
+
+### 中船搜索 水位计 错误 
+
+已经解决
+
+> 由于缩写的原因，导致数据的准确性降低
+
+### neep 保存文件 windows下非法字符
+
+> 文件名存在 / 符号，导致保存失败
+
+### 国能E购 加密 
+
+https://www.neep.shop/
+run:neep.py
+
+ 
+        
